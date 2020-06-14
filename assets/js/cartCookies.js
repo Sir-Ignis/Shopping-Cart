@@ -14,8 +14,6 @@ function incCookie(name, props) {
 function decCookie(name, props) {
   props.quantity -= 1;
   Cookies.set(name, JSON.stringify(props));
-  if (props.quantity < 1) {
-  }
   render(name, props);
 }
 
@@ -92,6 +90,8 @@ function renderNewItem(cookie) {
   document
     .getElementById("shop-container")
     .insertAdjacentHTML("beforeend", html);
+  document.getElementById("total-heading-col").style.opacity = "1";
+  document.getElementById("total-price").innerHTML = "£" + getTotal();
 }
 
 function renderUpdateItem(cookie) {
@@ -100,15 +100,36 @@ function renderUpdateItem(cookie) {
     document.getElementsByClassName("item-quantity")[i] = cookie[1].quantity;
     document.getElementsByClassName("item-price")[i] = cookie[1].price;
   }
+  if (items.length > 0) {
+    document.getElementById("total-heading-col").style.opacity = "1";
+    document.getElementById("total-price").innerHTML = "£" + getTotal();
+  } else {
+    document.getElementById("cart-is-empty").style.opacity = "1";
+  }
 }
 
 if (fileName === "shopping-cart.html") {
   window.onload = function renderCart() {
+    console.log("called on load");
+    if (document.getElementsByClassName("item-row").length > 0) {
+      document.getElementById("cart-is-empty").style.opacity = "0";
+    }
     if (
       document.getElementsByClassName("cart-item-title")[0].innerHTML ===
       "Item Title"
     ) {
       document.getElementsByClassName("item-row")[0].remove();
+    }
+    if (document.getElementsByClassName("cart-item-title")[0] === undefined) {
+      console.log("case1a");
+      document.getElementById("total-heading-col").style.opacity = "0";
+    } else {
+      console.log("case1b");
+      document.getElementById("total-heading-col").style.opacity = "1";
+    }
+    if (document.getElementById("total-price").innerHTML === "£99.99") {
+      console.log("case2");
+      document.getElementById("total-price").innerHTML = "";
     }
     var o = Cookies.get();
     var sortedCookies = Object.keys(o)
@@ -117,9 +138,14 @@ if (fileName === "shopping-cart.html") {
     for (var i = 0; i < Reflect.ownKeys(sortedCookies).length; i++) {
       var cookie = Object.entries(sortedCookies)[i];
       try {
-        if (!isOnPage(cookie) && JSON.parse(cookie[1]).quantity > 0) {
+        if (
+          !isOnPage(JSON.parse(cookie[1]).name) &&
+          JSON.parse(cookie[1]).quantity > 0
+        ) {
+          console.log("render new item");
           renderNewItem(cookie);
         } else {
+          console.log("called update item");
           renderUpdateItem(cookie);
         }
       } catch (err) {
@@ -152,13 +178,28 @@ function incDec(item, opInc) {
   }
 }
 
+function getTotal() {
+  var prices = document.getElementsByClassName("item-price");
+  var total = 0;
+  for (var i = 0; i < prices.length; i++) {
+    console.log(prices[i].innerHTML.substring(1));
+    total += parseInt(prices[i].innerHTML.substring(1));
+  }
+  return total;
+}
+
 function render(name, props) {
+  var item = document.getElementById(name);
+  item.querySelector(".item-quantity").innerHTML = props.quantity;
+  item.querySelector(".item-price").innerHTML =
+    "£" + parseFloat(props.price * props.quantity);
+  document.getElementById("total-price").innerHTML = "£" + getTotal();
   if (props.quantity === 0) {
     document.getElementById(name).remove();
-  } else {
-    var item = document.getElementById(name);
-    item.querySelector(".item-quantity").innerHTML = props.quantity;
-    item.querySelector(".item-price").innerHTML =
-      "£" + parseFloat(props.price * props.quantity);
+  }
+  if (document.getElementsByClassName("cart-item-title")[0] === undefined) {
+    document.getElementById("total-heading-col").style.opacity = "0";
+    document.getElementById("total-price").innerHTML = "";
+    document.getElementById("cart-is-empty").style.opacity = "1";
   }
 }

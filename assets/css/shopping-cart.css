@@ -104,9 +104,29 @@
   margin: 16px 14px;
 }
 
+#total-heading-col {
+  max-width: 6ch;
+}
+
+#total-price-col {
+  max-width: 8ch;
+  /*margin-right: calc(100vw - 987px);*/
+  margin-right: 37px;
+}
+
+#cart-is-empty {
+  opacity: 0;
+}
+
 @media (min-width: 993px) {
   .control-row {
-    padding-right: calc(100vw - 900px);
+    padding-right: calc(100vw - 993px);
+  }
+}
+
+@media (min-width: 993px) {
+  #total-price-col {
+    margin-right: calc(100vw - 985.5px);
   }
 }
 
