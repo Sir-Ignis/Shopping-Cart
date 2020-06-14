@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Shop-Template</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/shopping-cart.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Lato&family=Raleway&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+</head>
+
+<body>
+    <div class="container dark black" id="shop-container">
+        <div class="row row-nowrap">
+            <div class="col d-flex align-items-center" id="cart-title-col">
+                <h1>Shopping Cart</h1>
+            </div>
+            <div class="col d-flex justify-content-end" id="cart-exit-col"><a href="index.html"><div id="cart-exit-icon" class="fas fa-times"></div></a></div>
+        </div>
+        <div class="row item-row">
+            <div class="col item-col">
+                <div class="row row-nowrap">
+                    <div class="col cart-item-col d-flex justify-content-start align-items-center">
+                        <h4 class="cart-item-title">Item Title</h4>
+                    </div>
+                </div>
+                <div class="row row-nowrap">
+                    <div class="col cart-item-col d-flex justify-content-start align-items-center"><img class="item-img" src="assets/img/150x150.png"></div>
+                    <div class="col item-desc-col d-flex">
+                        <p class="item-desc"><span style="text-decoration: underline;">Item Description</span><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et tortor hendrerit, tincidunt nisi ac.<br></p>
+                    </div>
+                </div>
+                <div class="row row-nowrap">
+                    <div class="col cart-item-col pad">
+                        <h5 class="item-subtitle">Item Subtitle</h5>
+                    </div>
+                    <div class="col item-control-col">
+                        <div class="row">
+                            <div class="col control-col">
+                                <div class="row control-row">
+                                    <div class="col quantity-title-col d-flex justify-content-end">
+                                        <h6>Quantity</h6>
+                                    </div>
+                                    <div class="col price-title-col d-flex justify-content-end">
+                                        <h6>Price</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col control-col">
+                                <div class="row row-nowrap control-row">
+                                    <div class="col d-flex quantity-control-col d-flex justify-content-center">
+                                        <div class="row row-nowrap">
+                                            <div class="col inc-dec-col d-flex justify-content-end align-items-center"><button class="dec-btn" onclick="incDec(this, false)"><div class="fas fa-minus inc-dec-icon"></div></button></div>
+                                            <div class="col quantity-col d-flex justify-content-center" style="padding: 0;">
+                                                <h5 class="item-quantity">1</h5>
+                                            </div>
+                                            <div class="col inc-dec-col d-flex justify-content-start align-items-center"><button class="inc-btn" onclick="incDec(this, true)"><div class="fas fa-plus inc-dec-icon"></div></button></div>
+                                        </div>
+                                    </div>
+                                    <div class="col price-col d-flex justify-content-center">
+                                        <h5 class="item-price">£99.99</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/cartCookies.js"></script>
+    <script src="assets/js/renderShop.js"></script>
+</body>
+
+</html>
