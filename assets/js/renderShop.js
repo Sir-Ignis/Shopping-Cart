@@ -52,8 +52,7 @@ function itemOnPage(cookie) {
 function renderShopItem(cookie, i) {
   var shopItemData = JSON.parse(cookie[1]);
   document.getElementsByClassName("shop-item-col")[i].id = cookie[0];
-  document.getElementsByClassName("shop-item-img")[i].src =
-    "assets/img/" + shopItemData.image;
+  document.getElementsByClassName("shop-item-img")[i].src = "assets/img/" + shopItemData.image;
   document.getElementsByClassName("shop-item-price")[i].innerHTML =
     "£" + shopItemData.price;
   document.getElementsByClassName("shop-item-name")[i].innerHTML =
