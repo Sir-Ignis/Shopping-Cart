@@ -48,6 +48,10 @@
   max-width: 150px;
 }
 
+.item-img {
+  border-radius: 15px;
+}
+
 .item-desc-col {
   padding-top: 0;
 }
@@ -127,6 +131,35 @@
 @media (min-width: 993px) {
   #total-price-col {
     margin-right: calc(100vw - 985.5px);
+  }
+}
+
+@media (max-width: 600px) {
+  .col.item-col {
+    padding: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .item-desc-col {
+    padding: 0;
+  }
+}
+
+@media (max-width: 515px) {
+  .col.item-control-col, .col.control-col {
+    position: relative;
+    width: 150px;
+    max-width: 150px;
+    flex: 1 1 150px;
+    padding: 0;
+    bottom: calc(65px - 12.5vw);
+  }
+}
+
+@media (max-width: 515px) {
+  .quantity-control-col {
+    padding: 0;
   }
 }
 

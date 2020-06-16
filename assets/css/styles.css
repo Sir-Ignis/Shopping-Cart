@@ -54,15 +54,15 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 }
 
 #shop-heading-col {
-  flex: 1 1 calc(100vw - 4ch) !important;
-  max-width: calc(100vw - 4ch) !important;
+  flex: 1 1 calc(100vw - 3em) !important;
+  max-width: calc(100vw - 3em) !important;
   justify-content: center;
   align-items: center;
 }
 
 #shopping-cart-icon-col {
-  flex: 1 1 4ch !important;
-  max-width: 4ch !important;
+  flex: 1 1 1.5em !important;
+  max-width: 1.5em !important;
 }
 
 #shopping-cart-icon {
@@ -101,7 +101,7 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 
 @media (max-width: 1199px) {
   #shopping-cart-heading {
-    padding-left: calc(49.1vw - 379px);
+    padding-left: calc(49.1vw - 407px);
   }
 }
 
@@ -126,13 +126,6 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 }
 
 @media (max-width: 1199px) {
-  .shop-item-price-col {
-    justify-content: start;
-    margin-left: 25px;
-  }
-}
-
-@media (max-width: 1199px) {
   .shop-item-desc-col {
     max-width: 380px;
     display: flex;
@@ -142,14 +135,14 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 }
 
 @media (max-width: 1199px) {
-  .shop-btn-row {
-    margin-left: 25px;
+  #shopping-container .row {
+    display: inline-block;
   }
 }
 
 @media (max-width: 859px) {
   #shopping-cart-heading {
-    padding-left: 30px;
+    padding-left: 45px;
   }
 }
 
@@ -247,6 +240,12 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 }
 
 @media (max-width: 600px) {
+  #shopping-container .row {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 600px) {
   #shopping-cart-heading {
     padding-left: 15px;
   }
@@ -254,12 +253,6 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 
 @media (max-width: 600px) {
   .shop-item-img {
-    /*width: calc(100vw / 2 - 70px);*/
-    /*height: calc(100vw / 2 - 70px);*/
-    /*min-width: 150px;*/
-    /*min-height: 150px;*/
-    /*max-width: 220px;*/
-    /*max-height: 220px;*/
     width: 200px;
     height: 200px;
   }
@@ -324,7 +317,7 @@ button::-moz-focus-inner, a::-moz-focus-inner {
 }
 
 @media (max-width: 600px) {
-  .col.shop-item-description-col {
+  #shopping-container, .col.shop-item-description-col {
     padding: 0;
   }
 }

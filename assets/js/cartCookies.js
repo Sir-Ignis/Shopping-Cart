@@ -37,7 +37,7 @@ function renderNewItem(cookie) {
                     </div>
                 </div>
                 <div class="row row-nowrap">
-                    <div class="col cart-item-col d-flex justify-content-start align-items-center"><img class="item-img" src="assets/img/${
+                    <div class="col cart-item-col d-flex justify-content-start align-items-start"><img class="item-img" src="assets/img/${
                       props.image
                     }"></div>
                     <div class="col item-desc-col d-flex">
@@ -45,9 +45,6 @@ function renderNewItem(cookie) {
                     </div>
                 </div>
                 <div class="row row-nowrap">
-                    <div class="col cart-item-col pad">
-                        <h5 class="item-subtitle"></h5>
-                    </div>
                     <div class="col item-control-col">
                         <div class="row">
                             <div class="col control-col">
@@ -103,38 +100,33 @@ function renderUpdateItem(cookie) {
   if (items.length > 0) {
     document.getElementById("total-heading-col").style.opacity = "1";
     document.getElementById("total-price").innerHTML = "£" + getTotal();
-  } else {
-    document.getElementById("cart-is-empty").style.opacity = "1";
   }
 }
 
 if (fileName === "shopping-cart.html") {
   window.onload = function renderCart() {
-    console.log("called on load");
-    if (document.getElementsByClassName("item-row").length > 0) {
-      document.getElementById("cart-is-empty").style.opacity = "0";
-    }
     if (
       document.getElementsByClassName("cart-item-title")[0].innerHTML ===
       "Item Title"
     ) {
       document.getElementsByClassName("item-row")[0].remove();
     }
+    /*if (document.getElementsByClassName("cart-item-title")[0] !== undefined) {
+      document.getElementById("cart-is-empty").style.opacity = "0";
+    }*/
     if (document.getElementsByClassName("cart-item-title")[0] === undefined) {
-      console.log("case1a");
       document.getElementById("total-heading-col").style.opacity = "0";
     } else {
-      console.log("case1b");
       document.getElementById("total-heading-col").style.opacity = "1";
     }
     if (document.getElementById("total-price").innerHTML === "£99.99") {
-      console.log("case2");
       document.getElementById("total-price").innerHTML = "";
     }
     var o = Cookies.get();
     var sortedCookies = Object.keys(o)
       .sort()
       .reduce((r, k) => ((r[k] = o[k]), r), {});
+    var allEmpty = true;
     for (var i = 0; i < Reflect.ownKeys(sortedCookies).length; i++) {
       var cookie = Object.entries(sortedCookies)[i];
       try {
@@ -142,15 +134,18 @@ if (fileName === "shopping-cart.html") {
           !isOnPage(JSON.parse(cookie[1]).name) &&
           JSON.parse(cookie[1]).quantity > 0
         ) {
-          console.log("render new item");
+          allEmpty = false;
           renderNewItem(cookie);
-        } else {
-          console.log("called update item");
+        } else if (JSON.parse(cookie[1]).quantity > 0) {
+          allEmpty = false;
           renderUpdateItem(cookie);
         }
       } catch (err) {
         console.log(err);
       }
+    }
+    if (allEmpty) {
+      document.getElementById("cart-is-empty").style.opacity = "1";
     }
   };
 }
@@ -182,7 +177,6 @@ function getTotal() {
   var prices = document.getElementsByClassName("item-price");
   var total = 0;
   for (var i = 0; i < prices.length; i++) {
-    console.log(prices[i].innerHTML.substring(1));
     total += parseInt(prices[i].innerHTML.substring(1));
   }
   return total;

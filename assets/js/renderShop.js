@@ -11,7 +11,7 @@ try {
   let shopReq = new XMLHttpRequest();
   shopReq.open(
     "GET",
-    "https://api.jsonbin.io/b/5ee569560e966a7aa368db34/6",
+    "https://api.jsonbin.io/b/5ee569560e966a7aa368db34/7",
     true
   );
   shopReq.send();
