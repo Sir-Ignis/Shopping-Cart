@@ -36,7 +36,7 @@
   grid-template-areas: "shop-title" "shop-icon";
 }
 
-@media screen and (min-width: 601px) and (max-width: 1024px) {
+@media screen and (min-width: 500px) and (max-width: 767px) {
   .navbar {
     grid-template-columns: 95vw 5vw;
   }
@@ -49,7 +49,7 @@
   }
 }
 
-@media screen and (min-width: 1025px) and (max-width: 1280px) {
+@media screen and (min-width: 768px) and (max-width: 1023px) {
   .navbar {
     grid-template-columns: 96vw 4vw;
   }
@@ -62,7 +62,7 @@
   }
 }
 
-@media screen and (min-width: 1281px) and (max-width: 1440px) {
+@media screen and (min-width: 1024px) and (max-width: 1279px) {
   .navbar {
     grid-template-columns: 96.5vw 3.5vw;
   }
@@ -75,9 +75,9 @@
   }
 }
 
-@media screen and (min-width: 1441px) {
+@media screen and (min-width: 1280px) and (max-width: 1439px) {
   .navbar {
-    grid-template-columns: 97vw 3vw;
+    grid-template-columns: 97% 3%;
   }
   .container {
     grid-template-columns: repeat(auto-fill, 16.5vw);
@@ -86,4 +86,103 @@
     grid-template-columns: 16.5vw;
     grid-template-rows: 16.5vw 20px 30px 40px;
   }
+}
+
+@media screen and (min-width: 1440px) {
+  .navbar {
+    grid-template-columns: 97.2% 2.8%;
+  }
+  .container {
+    grid-template-columns: repeat(auto-fill, 14.27vw);
+  }
+  .item {
+    grid-template-columns: 14.27vw;
+    grid-template-rows: 14.27vw 20px 30px 40px;
+  }
+}
+
+/* default sizes are for phones, i.e. 320px to 415px */
+.basket-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 100vw);
+  justify-content: center;
+}
+
+.item-img {
+  grid-area: item-img;
+}
+.item-title {
+  grid-area: item-title;
+}
+.item-price {
+  grid-area: item-price;
+}
+.item-quantity {
+  display: inline-flex;
+  grid-area: item-quantity;
+}
+
+.item-remove {
+  grid-area: item-remove;
+}
+
+.basket-item {
+  display: grid;
+  grid-template-columns: 20vw 60vw 19vw;
+  grid-template-rows: 2.5vw 10vw 10vw 2.5vw;
+  grid-template-areas:
+    ". . ."
+    "item-img item-title item-price"
+    "item-img item-quantity item-price"
+    ". . .";
+  background-color: #f6f6f6;
+}
+
+#summary-container {
+  display: grid;
+  grid-template-columns: 70vw 30vw;
+  grid-template-rows: 70px 20px 20px 40px;
+  grid-template-areas:
+  "summary-title ."
+  "promo-code-text ."
+  "subtotal-text subtotal-value"
+  "total-text total-value";
+  margin: 15px;
+}
+
+#summary-title {
+  grid-area: summary-title;
+}
+
+#promo-code-text {
+  grid-area: promo-code-text;
+  display: inline-flex;
+}
+
+#subtotal-text {
+  grid-area: subtotal-text;
+}
+
+#subtotal-value {
+  grid-area: subtotal-value;
+  margin: 0 15px;
+}
+
+#total-text {
+  grid-area: total-text;
+  margin: 15px 0;
+}
+
+
+#total-value {
+  grid-area: total-value;
+  margin: 15px;
+}
+
+
+#empty-basket {
+  display: grid;
+  grid-template-columns: 100%;
+  display: flex;
+  justify-content: center;
 }
