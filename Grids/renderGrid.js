@@ -6,20 +6,20 @@ let fileName = window.location.pathname
   .pop();
 
 var imgs = [
-  "google-pixel-4.jpg",
-  "huawei-p30-pro.jpg",
-  "iphonex-spacegray.jpeg",
-  "oneplus.jpeg",
-  "oppo-find-x2-neo-5g.jpg",
-  "samsung-galaxy-s10.jpeg",
-  "tcl-10-pro.jpg",
-  "motorola-edge.jpg",
-  "lg-v50-thinq.jpg",
-  "honor-20-pro.jpg",
-  "sony-xperia-5.jpeg",
-  "asus-rog-zs600kl.jpg",
-  "nokia-9-pureview.jpg",
-  "xiamoi-mi-10.jpg",
+  "google-pixel-4-2.jpg",
+  "huawei-p30-pro2.jpg",
+  "iphonex-spacegray2.jpeg",
+  "oneplus2.jpeg",
+  "oppo-find-x2-neo-5g-2.jpg",
+  "samsung-galaxy-s10-2.jpeg",
+  "tcl-10-pro2.jpg",
+  "motorola-edge2.jpg",
+  "lg-v50-thinq2.jpg",
+  "honor-20-pro2.jpg",
+  "sony-xperia-5-2.jpeg",
+  "asus-rog-zs600kl2.jpg",
+  "nokia-9-pureview2.jpg",
+  "xiamoi-mi-10-2.jpg",
 ];
 
 var prices = [
@@ -198,9 +198,7 @@ if (fileName === "grid-template.html") {
 
   // Close the dropdown if the user clicks outside of it
   window.onclick = function (event) {
-    console.log("fired!");
     if (!event.target.matches(".fa-angle-down")) {
-      console.log("fired2!");
       try {
         document.getElementsByClassName("drop-dwn-content")[0].remove();
       } catch {
@@ -208,6 +206,18 @@ if (fileName === "grid-template.html") {
       }
     }
   };
+
+  function getIndexOfItem(name) {
+    var x = JSON.parse(localStorage.getItem("shopData"))
+    var y = Object.values(x)
+    var z = y[0];
+    for(var i = 0; i < z.length; i++) {
+      if(z[i].title === name) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   function dropDwn(item) {
     var dwn = document.getElementsByClassName("drop-dwn");
@@ -230,15 +240,17 @@ if (fileName === "grid-template.html") {
   }
 
   function setQuantity(i, index) {
+    var name = document.getElementsByClassName('item-title')[index].children[0].innerHTML;
+    var itemIndex = getIndexOfItem(name);
     var x = JSON.parse(localStorage.getItem("shopData"))
     var y = Object.values(x)
-    y[0][index].quantity = i;
+    y[0][itemIndex].quantity = i;
     Object.assign(x, y)
     localStorage.setItem("shopData", JSON.stringify(x))
     if(i > 0) {
       document.getElementsByClassName("quantity-value")[index].innerHTML = i;
       document.getElementsByClassName("item-price")[index].children[0].innerHTML =
-      "£"+i*Object.values(JSON.parse(localStorage.getItem("shopData")))[0][index].price;
+      "£"+i*Object.values(JSON.parse(localStorage.getItem("shopData")))[0][itemIndex].price;
       document.getElementById('subtotal-value').children[0].innerHTML = " ";
       document.getElementById('total-value').children[0].innerHTML = " ";
     } else {

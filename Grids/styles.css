@@ -35,8 +35,6 @@ a {
   font-size: 2em;
 }
 
-@media screen and (min-width: 1440px) {
-}
 
 .quantity-text {
   margin: 0 5px 0 0;
@@ -51,7 +49,7 @@ a {
 
 .fa-angle-down,
 .drop-dwn {
-  width: 30px !important;
+  width: 20px !important;
 }
 
 .drop-dwn-content {
@@ -64,6 +62,94 @@ a {
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+}
+
+@media only screen and (min-width: 1399px){
+  .basket-container h4, #summary-container h4 {
+    font-size: 1.8em !important;
+  }
+  .basket-container h5, #summary-container h5 {
+    font-size: 1.5em !important;
+  }
+.item-title h4,
+.item-price h5 {
+  margin: calc(4px + 1.6vw) 0 !important;
+}
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+  .basket-container h4, #summary-container h4 {
+    font-size: 1.5em !important;
+  }
+  .basket-container h5, #summary-container h5 {
+    font-size: 1.3em !important;
+  }
+.item-title h4,
+.item-price h5 {
+  margin: calc(4px + 1.6vw) 0 !important;
+}
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1199px) {
+  .basket-container h4, #summary-container h4 {
+    font-size: 1.3em !important;
+  }
+  .basket-container h5, #summary-container h5 {
+    font-size: 1.15em !important;
+  }
+.item-title h4,
+.item-price h5 {
+  margin: calc(4px + 1.6vw) 0 !important;
+}
+}
+
+
+@media only screen and (min-width: 801px) and (max-width: 1024px) {
+  .basket-container h4, #summary-container h4 {
+    font-size: 1.15em !important;
+  }
+  .basket-container h5, #summary-container h5 {
+    font-size: 1em !important;
+  }
+.item-title h4,
+.item-price h5 {
+  margin: calc(4px + 1.6vw) 0 !important;
+}
+}
+
+
+@media only screen and (min-width: 701px) and (max-width: 800px) {
+  .basket-container h4, #summary-container h4 {
+    font-size: 1.15em !important;
+  }
+  .basket-container h5, #summary-container h5 {
+    font-size: 1em !important;
+  }
+.item-title h4,
+.item-price h5 {
+  margin: calc(4px + 1.3vw) 0 !important;
+}
+}
+
+@media only screen and (min-width: 600px) and (max-width: 700px) {
+  .basket-container h4, #summary-container h4 {
+    font-size: 1.15em !important;
+  }
+  .basket-container h5, #summary-container h5 {
+    font-size: 1em !important;
+  }
+.item-title h4,
+.item-price h5 {
+  margin: calc(4px + 1vw) 0 !important;
+}
+}
+
+@media screen and (min-width: 415px) and (max-width: 599px){
+  /*shop cart items*/
+  .item-title h4,
+  .item-price h5 {
+    margin: calc(4px + 0.7vw) 0 !important;
+  }
 }
 
 @media screen and (min-width: 320px) {
@@ -96,7 +182,7 @@ a {
   /*shop cart items*/
   .item-title h4,
   .item-price h5 {
-    margin: 9px 0;
+    margin: 4px 0;
   }
 
   .item-quantity h5 {
@@ -111,5 +197,9 @@ a {
 
   #summary-container h4, #summary-container h5 {
     margin: 0;
+  }
+
+  #summary-container * {
+    display: inline-flex;
   }
 }
