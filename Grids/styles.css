@@ -189,10 +189,34 @@ a {
     font-size: 0.9em;
   }
 
-  .item-quantity button {
+  .item-quantity button, #promo-code-text button {
     padding: 0;
     background-color: transparent;
     display: flex;
+  }
+
+  #promo-code-submit {
+    padding: 5px 10px;
+    background-color: black;
+    display: flex;
+    border: 0;
+    color: white;
+    margin-left: 10px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  #promo-code-value {
+    border-radius: 5px;
+    border-right-color: black;
+    border-bottom-color: black;
+  }
+
+
+  @media only screen and (min-width: 1200px) {
+    .item-quantity button, #promo-code-text button {
+      padding-top: 3px;
+    }
   }
 
   #summary-container h4, #summary-container h5 {

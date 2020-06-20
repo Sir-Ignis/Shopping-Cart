@@ -141,24 +141,26 @@
 #summary-container {
   display: grid;
   grid-template-columns: 70vw 29vw;
-  grid-template-rows: 70px 20px 20px 40px;
+  grid-template-rows: 70px 20px 0 20px 40px 140px;
   grid-template-areas:
   "summary-title ."
   "promo-code-text ."
+  "promo-drop-dwn ."
   "subtotal-text subtotal-value"
-  "total-text total-value";
+  "total-text total-value"
+  "paypal-button-container paypal-button-container";
   margin: 15px 0 15px calc(19px + 8vw - 26px);
 }
 
 @media only screen and (min-width: 600px) and (max-width: 1024px) {
   #summary-container {
-    grid-template-rows: 70px 30px 30px 50px;
+    grid-template-rows: 70px 30px 0 30px 40px 140px;
   }
 }
 
-@media only screen and (min-width: 1025px) and (max-width: 1399px) {
+@media only screen and (min-width: 1025px) and (max-width: 1399px){
   #summary-container {
-    grid-template-rows: 70px 35px 35px 50px;
+    grid-template-rows: 70px 35px 0 35px 40px 140px;
   }
 }
 
@@ -171,6 +173,12 @@
   grid-area: promo-code-text;
   display: inline-flex;
 }
+
+#promo-drop-dwn {
+  grid-area: promo-drop-dwn;
+  display: none;
+}
+
 
 #subtotal-text {
   grid-area: subtotal-text;
@@ -192,6 +200,12 @@
   grid-area: total-value;
   margin: 16px 0 0 calc(10px + 1vw);
   width: 19vw;
+}
+
+#paypal-button-container {
+  grid-area: paypal-button-container;
+  max-width: 200px;
+  margin-top: 20px;
 }
 
 
@@ -293,7 +307,7 @@
 }
 @media screen and (min-width: 1399px) {
   #summary-container {
-    grid-template-rows: 90px 40px 40px 55px;
+    grid-template-rows: 90px 40px 0 40px 55px;
   }
   .basket-container {
     grid-template-columns: repeat(auto-fill, 99vw);

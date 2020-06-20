@@ -6,20 +6,20 @@ let fileName = window.location.pathname
   .pop();
 
 var imgs = [
-  "google-pixel-4-2.jpg",
-  "huawei-p30-pro2.jpg",
-  "iphonex-spacegray2.jpeg",
-  "oneplus2.jpeg",
-  "oppo-find-x2-neo-5g-2.jpg",
-  "samsung-galaxy-s10-2.jpeg",
-  "tcl-10-pro2.jpg",
-  "motorola-edge2.jpg",
-  "lg-v50-thinq2.jpg",
-  "honor-20-pro2.jpg",
-  "sony-xperia-5-2.jpeg",
-  "asus-rog-zs600kl2.jpg",
-  "nokia-9-pureview2.jpg",
-  "xiamoi-mi-10-2.jpg",
+  "google-pixel-4.jpg",
+  "huawei-p30-pro.jpg",
+  "iphonex-spacegray.jpeg",
+  "oneplus.jpeg",
+  "oppo-find-x2-neo-5g.jpg",
+  "samsung-galaxy-s10.jpeg",
+  "tcl-10-pro.jpg",
+  "motorola-edge.jpg",
+  "lg-v50-thinq.jpg",
+  "honor-20-pro.jpg",
+  "sony-xperia-5.jpeg",
+  "asus-rog-zs600kl.jpg",
+  "nokia-9-pureview.jpg",
+  "xiamoi-mi-10.jpg",
 ];
 
 var prices = [
@@ -64,7 +64,7 @@ if (localStorage.getItem("shopData") === null) {
       { "title": titles[i], "price": prices[i], "quantity": 0, "img": imgs[i] },
     ];
   }
-  var shopData = { "shopItems": items };
+  var shopData = { "shopItems": items, "promoCode": ""};
   localStorage.setItem("shopData", JSON.stringify(shopData));
 }
 
@@ -264,14 +264,42 @@ if (fileName === "grid-template.html") {
     }
   }
 
+  function renderButtons() {
+    paypal.Buttons({
+      style: {
+        size: 'responsive'
+      },
+      createOrder: function(data, actions) {
+        // This function sets up the details of the transaction, including the amount and line item details.
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: `${getSubtotal()}`
+            }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        // This function captures the funds from the transaction.
+        return actions.order.capture().then(function(details) {
+          // This function shows a transaction success message to your buyer.
+          alert('Transaction completed by ' + details.payer.name.given_name);
+        });
+      }
+    }).render('#paypal-button-container');
+    //This function displays Smart Payment Buttons on your web page.
+  }
+
   function renderSummary() {
     if(document.getElementById('summary-title') === null) {
     var html = `<div id="summary-title"><h1>Summary</h1></div>
-          <div id="promo-code-text"><h5>Do you have a Promo Code?</h5></div>
+  <div id="promo-code-text"><h5>Do you have a Promo Code?</h5><button onclick="promoDropDwn()"><i class="fas fa-angle-down"></i></button></div>
+          <div id="promo-drop-dwn"></div>
           <div id="subtotal-text"><h5>Subtotal</h5></div>
           <div id="subtotal-value"><h5></h5></div>
           <div id="total-text"><h4>Total</h4></div>
           <div id="total-value"><h4></h4></div>
+          <div id="paypal-button-container"></div>
         </div>`;
     document
       .getElementById("summary-container")
@@ -279,6 +307,60 @@ if (fileName === "grid-template.html") {
     }
     document.getElementById('subtotal-value').children[0].innerHTML = "£"+getSubtotal();
     document.getElementById('total-value').children[0].innerHTML = "£"+getTotal();
+    if(document.getElementById('paypal-button-container').innerHTML === "") {
+      renderButtons();
+    }
+  }
+
+  function validateMyForm() {
+    var code = document.getElementById('promo-code-value').value;
+    //TODO: implement promo code getter
+    if(code === "PROMO") {
+      var x = JSON.parse(localStorage.getItem("shopData"))
+      var y = Object.values(x)
+      y[1] = code;
+      Object.assign(x, y)
+      localStorage.setItem("shopData", JSON.stringify(x))
+    }
+    renderSummary();
+    removePromoDropDwn();
+  }
+
+  function promoDropDwn() {
+    var promo = document.getElementById('promo-drop-dwn');
+    if(promo.style.display === "" || promo.style.display === "none") {
+      promo.style.display = "block";
+      if(window.innerWidth < 600) {
+        document.getElementById('summary-container').style.gridTemplateRows = "70px 20px 40px 20px 40px 140px";
+      } else if (window.innerWidth > 600 && window.screen.width < 1025) {
+        document.getElementById('summary-container').style.gridTemplateRows = "70px 30px 60px 30px 40px 140px";
+      } else if (window.innerWidth > 1024) {
+        document.getElementById('summary-container').style.gridTemplateRows = "70px 35px 80px 35px 40px 140px";
+      }
+      var html = `<form onsubmit="event.preventDefault(); validateMyForm();">
+                     <input type="text" id="promo-code-value" name="promocode-value" placeholder="">
+                     <input id="promo-code-submit" type="submit" value="Submit">
+                  </form>`;
+      document
+        .getElementById("promo-drop-dwn")
+        .insertAdjacentHTML("beforeend", html);
+    } else {
+      removePromoDropDwn();
+    }
+  }
+
+  function removePromoDropDwn() {
+    var promo = document.getElementById('promo-drop-dwn');
+    document
+      .getElementById("promo-drop-dwn").innerHTML = "";
+    promo.style.display = "none";
+    if(window.screen.width < 600) {
+      document.getElementById('summary-container').style.gridTemplateRows = "70px 20px 0 20px 40px 140px";
+    } else if (window.screen.width > 600 && window.screen.width < 1025) {
+      document.getElementById('summary-container').style.gridTemplateRows = "70px 30px 0 30px 40px 140px";
+    } else if (window.screen.width > 1024) {
+      document.getElementById('summary-container').style.gridTemplateRows = "70px 35px 0 35px 40px 140px";
+    }
   }
 
   function getSubtotal() {
@@ -291,8 +373,9 @@ if (fileName === "grid-template.html") {
   }
 
   function getTotal() {
-    //for now we just return subtotal
-    //after promo code implemented this will be different
+    if(Object.values(JSON.parse(localStorage.getItem("shopData")))[1] === "PROMO") {
+      return 0.75*getSubtotal();
+    }
     return getSubtotal();
   }
 }
