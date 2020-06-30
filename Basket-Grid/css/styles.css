@@ -1,0 +1,14 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Muli', sans-serif;
+}
+
+.transparent-btn {
+  border: none;
+  background-color: transparent;
+  color: inherit;
+}

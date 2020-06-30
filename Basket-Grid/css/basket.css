@@ -1,0 +1,152 @@
+#basket-title {
+  margin: 10px 15px;
+}
+
+#basket-container {
+  display: grid;
+  grid-template-columns: 70%;
+  margin: 0 15px;
+}
+
+.basket-item {
+  display: grid;
+  grid-template-columns: 15% 75% 10%;
+  grid-template-rows: 30px 35px 55px 40px;
+  grid-template-areas:
+    "item-icon . ."
+    "item-icon item-name ."
+    "item-icon item-description item-price"
+    "item-icon item-menu-bar .";
+  background-color: #f2f2f2;
+  padding: 10px 0;
+  border: 1px solid #808080;
+}
+
+.item-icon {
+  grid-area: item-icon;
+  font-size: 8em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-name {
+  grid-area: item-name;
+}
+
+.item-description {
+  grid-area: item-description;
+  font-size: 1.1em;
+  margin-right: 15px;
+}
+
+.item-price {
+  grid-area: item-price;
+}
+
+.item-remove {
+  grid-area: item-remove;
+}
+
+.item-menu-bar {
+  display: grid;
+  grid-area: item-menu-bar;
+  grid-template-columns: 60px 50px;
+  grid-template-rows: 20px;
+  grid-template-areas:
+  "item-addons item-delete";
+  grid-column-gap: 5px;
+  color: blue;
+}
+
+.item-addons {
+  grid-area: item-addons;
+  margin-right: 4px;
+  border-right: 1px solid #808080;
+}
+
+.item-delete {
+  grid-area: item-delete;
+}
+
+.addons-container {
+  grid-area: addons-container;
+  display: grid;
+  grid-template-columns: 100%;
+}
+
+.addon-item-heading {
+  display: grid;
+  grid-template-columns: 150px 30px 50px;
+  grid-template-rows: 30px;
+  grid-template-areas:
+    "addon-title-heading . addon-price-heading";
+  font-weight: 600;
+}
+
+.addon-item {
+  display: grid;
+  grid-template-columns: 150px 30px 50px;
+  grid-template-rows: 20px;
+  grid-template-areas:
+    "addon-title addon-select-btn addon-price"
+}
+
+
+.addon-title-heading {
+  grid-area: addon-title-heading;
+}
+
+.addon-price-heading {
+  grid-area: addon-price-heading;
+}
+
+.addon-select-btn {
+  grid-area: addon-select-btn;
+  display: flex;
+  align-items: center;
+}
+
+.addon-title {
+  grid-area: addon-title;
+}
+
+.addon-price {
+  grid-area: addon-price;
+}
+
+.addon-select-btn button {
+  border: 1px solid black;
+  width: 15px;
+  height: 15px;
+  /*border-radius: 100%;*/
+  background-color: white;
+}
+
+
+#basket-summary {
+  display: grid;
+  grid-template-columns: 15% 75% 10%;
+  grid-template-rows: 50px 150px;
+  grid-template-areas:
+    ".basket-total total-value"
+    ". checkout-btns .";
+  margin: 10px 0;
+}
+
+#basket-total {
+  grid-area: basket-total;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 1.3em;
+  margin-right: 25px;
+}
+
+#total-value {
+  grid-area: total-value;
+  font-size: 1.3em;
+}
+
+#checkout-btns {
+  grid-area: checkout-btns;
+}
