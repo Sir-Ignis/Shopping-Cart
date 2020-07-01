@@ -21,7 +21,6 @@
   background-color: #f2f2f2;
   padding: 10px 0;
   border: 1px solid #808080;
-  max-height: 200px;
 }
 
 .item-icon {
@@ -164,7 +163,7 @@
 #checkout-container {
   grid-area: checkout-container;
   display: grid;
-  grid-template-rows: 25px 15px 150px 40px;
+  grid-template-rows: 25px 15px 110px 30px;
   grid-template-columns: 130px 50px auto;
   grid-template-areas:
   "basket-checkout-total checkoutout-total-value ."
@@ -180,11 +179,21 @@
 #checkout-btns {
   grid-area: checkout-btns;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 #paypal-buttons-container {
   width: 275px;
+}
+
+#paypal-paypal-btn-container {
+  width: 275px;
+  display: flex;
+}
+#paypal-card-btn-container {
+  width: 275px;
+  display: flex;
 }
 
 #basket-checkout-total {
@@ -201,4 +210,77 @@
   grid-area: checkout-message;
   max-width: 275px;
   font-size: 0.78em;
+}
+
+#checkout-order-summary {
+  grid-area: checkout-order-summary;
+}
+
+#checkout-order-headings {
+  display: grid;
+  grid-template-columns: 100px 600px auto;
+  grid-template-areas:
+  "order-summary-heading order-summary-heading ."
+  "order-item-name-heading order-item-addons-heading order-item-price-heading";
+}
+
+#order-summary-heading {
+  grid-area: order-summary-heading;
+  font-size: 1.5em;
+}
+
+#order-item-name-heading {
+  grid-area: order-item-name-heading;
+  padding: 10px 0;
+  font-weight: 600;
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+#order-item-addons-heading {
+  grid-area: order-item-addons-heading;
+  padding: 10px 0;
+  font-weight: 600;
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+#order-item-price-heading {
+  grid-area: order-item-price-heading;
+  padding: 10px 0;
+  font-weight: 600;
+  border: 1px solid black;
+}
+
+#order-items {
+  grid-area: order-items;
+  grid-template-rows: repeat(auto-fill, 30px);
+}
+
+
+.item-order-summarized {
+  display: grid;
+  grid-template-rows: 60px;
+  grid-template-columns: 100px 600px auto;
+  grid-template-areas:
+  "order-item-name order-item-addons order-item-price";
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+}
+
+.order-item-name {
+  grid-area: order-item-name;
+  border-right: 1px solid black;
+}
+
+.order-item-addons {
+  grid-area: order-item-addons;
+  border-right: 1px solid black;
+}
+
+.order-item-price {
+  grid-area: order-item-price;
+  border-right: 1px solid black;
 }

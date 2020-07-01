@@ -56,7 +56,7 @@ function renderCheckoutContainer() {
   if(document.getElementById("basket-checkout-total") === null) {
     var html = `<div id="basket-checkout-total">Basket Total:</div>
                 <div id="checkout-total-value"></div>
-                <div id="checkout-btns"><div id="paypal-buttons-container"></div></div>
+                <div id="checkout-btns"><div id="paypal-paypal-btn-container"></div><div id="paypal-card-btn-container"></div></div>
                 <div id="checkout-message">${CHECKOUT_MESSAGE}</div>
                 `;
     document
@@ -64,9 +64,94 @@ function renderCheckoutContainer() {
       .insertAdjacentHTML("afterbegin", html);
   }
   document.getElementById("checkout-total-value").innerText = "£" + getTotal();
-  if(document.getElementById("paypal-buttons-container").innerHTML === "") {
-    renderButtons();
+  if(document.getElementById("paypal-paypal-btn-container").innerHTML === "") {
+    renderPaypalBtn();
   }
+  if(document.getElementById("paypal-card-btn-container").innerHTML === "") {
+    renderPaypalCardBtn();
+  }
+}
+
+function renderPaypalBtn(FUNDING_SOURCES) {
+  var FUNDING_SOURCES = [
+    paypal.FUNDING.PAYPAL,
+    paypal.FUNDING.VENMO,
+    paypal.FUNDING.CREDIT,
+    paypal.FUNDING.CARD
+  ];
+var button = paypal.Buttons({
+  fundingSource: FUNDING_SOURCES[0]
+});
+button.render('#paypal-paypal-btn-container');
+}
+
+function renderPaypalCardBtn(FUNDING_SOURCES) {
+  var FUNDING_SOURCES = [
+    paypal.FUNDING.PAYPAL,
+    paypal.FUNDING.VENMO,
+    paypal.FUNDING.CREDIT,
+    paypal.FUNDING.CARD
+  ];
+  var button = paypal.Buttons({
+  fundingSource: FUNDING_SOURCES[3],
+  onClick: function() {
+    document.getElementById("basket-container").style.display = "none";
+    document.getElementById("main-container").style.gridTemplateColumns = "100%";
+    document.getElementById("main-container").style.gridTemplateAreas = `"checkout-container"`;
+    document.getElementById("checkout-container").style.margin = "0";
+    document.getElementById("checkout-container").style.padding = "0 0 0 45px";
+    document.getElementById("paypal-paypal-btn-container").remove();
+    document.getElementById("paypal-card-btn-container").style.width = "100%";
+    document.getElementById("basket-title").remove()
+    document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns checkout-order-summary"`;
+    document.getElementById("checkout-container").style.gridTemplateColumns = "50% 50%";
+    document.getElementById("checkout-container").style.gridTemplateRows = "auto";
+    document.getElementById("checkout-message").remove();
+    document.getElementById("checkout-total-value").remove();
+    document.getElementById("basket-checkout-total").remove();
+    var html = `<div id="checkout-order-summary">
+                  <div id="checkout-order-headings">
+                    <div id="order-summary-heading">Order Summary</div>
+                    <div id="order-item-name-heading">Item Name</div>
+                    <div id="order-item-addons-heading">Item Addons</div>
+                    <div id="order-item-price-heading">Item Price</div>
+                  </div>
+                  <div id="order-items"></div>
+                </div>`;
+    document
+      .getElementById("checkout-container")
+      .insertAdjacentHTML("beforeend", html)
+    var items = Object.values(JSON.parse(localStorage.getItem("shopData")))[0];
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (item.quantity > 0) {
+        var itemSummary = `<div class="item-order-summarized">
+                            <div class="order-item-name">${item.name}</div>
+                            <div class="order-item-addons">${getOrderAddons(item)}</div>
+                            <div class="order-item-price">£${item.price}</div>
+                           </div>`
+        document
+          .getElementById("order-items")
+          .insertAdjacentHTML("beforeend", itemSummary)
+      }
+    }
+  }});
+  button.render("#paypal-card-btn-container");
+}
+
+function getOrderAddons(item) {
+  var addons = item.addonNames;
+  var hasAddons = []
+  for(var i = 0; i < addons.length; i++) {
+    if(addons[i][1] === 1) {
+      hasAddons = [
+        ...hasAddons, addons[i][0]];
+    }
+  }
+  if(hasAddons.length === 0) {
+    return "none";
+  }
+  return hasAddons.join(", ");
 }
 
 
@@ -251,45 +336,4 @@ function getIndexOfClassEle(item) {
   var className = document.getElementsByClassName(item.className);
   className = [].slice.call(className);
   return className.indexOf(item);
-}
-
-function renderButtons() {
-  paypal.Buttons({
-    style: {
-      size: 'responsive'
-    },
-    onClick: function() {
-      document.getElementById("basket-container").style.display = "none";
-      document.getElementById("main-container").style.gridTemplateColumns = "100%";
-      document.getElementById("main-container").style.gridTemplateAreas = `"checkout-container"`;
-      document.getElementById("checkout-container").style.margin = "0";
-      document.getElementById("checkout-container").style.padding = "0 0 0 45px";
-      document.getElementById("checkout-container").style.gridTemplateColumns = "auto";
-      document.getElementById("paypal-buttons-container").style.width = "100%";
-      document.getElementById("basket-title").remove()
-      document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns"`
-      document.getElementById("checkout-container").style.gridTemplateRows = "1050px";
-      document.getElementById("checkout-message").remove();
-      document.getElementById("checkout-total-value").remove();
-      document.getElementById("basket-checkout-total").remove();
-    },
-    createOrder: function(data, actions) {
-      // This function sets up the details of the transaction, including the amount and line item details.
-      return actions.order.create({
-        purchase_units: [{
-          amount: {
-            value: `${getTotal()}`
-          }
-        }]
-      });
-    },
-    onApprove: function(data, actions) {
-      // This function captures the funds from the transaction.
-      return actions.order.capture().then(function(details) {
-        // This function shows a transaction success message to your buyer.
-        alert('Transaction completed by ' + details.payer.name.given_name);
-      });
-    }
-  }).render("#paypal-buttons-container");
-  //This function displays Smart Payment Buttons on your web page.
 }
