@@ -3,8 +3,9 @@
 }
 
 #basket-container {
-  display: grid;
-  grid-template-columns: 70%;
+  grid-area: basket-container;
+  /*display: grid;*/
+  grid-template-columns: 100%;
   margin: 0 15px;
 }
 
@@ -20,6 +21,7 @@
   background-color: #f2f2f2;
   padding: 10px 0;
   border: 1px solid #808080;
+  max-height: 200px;
 }
 
 .item-icon {
@@ -119,7 +121,6 @@
   border: 1px solid black;
   width: 15px;
   height: 15px;
-  /*border-radius: 100%;*/
   background-color: white;
 }
 
@@ -127,17 +128,21 @@
 #basket-summary {
   display: grid;
   grid-template-columns: 15% 75% 10%;
-  grid-template-rows: 50px 150px;
+  grid-template-rows: 50px;
   grid-template-areas:
-    ".basket-total total-value"
-    ". checkout-btns .";
-  margin: 10px 0;
+    ".basket-total total-value";
+  margin-top: 10px;
+  background-color: #f2f2f2;
+  padding: 15px 0 15px 15px;
+  border: 1px solid #808080;
+  max-height: 100px;
 }
 
 #basket-total {
   grid-area: basket-total;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   font-size: 1.3em;
   margin-right: 25px;
 }
@@ -145,8 +150,55 @@
 #total-value {
   grid-area: total-value;
   font-size: 1.3em;
+  display: flex;
+  align-items: center;
+}
+
+#main-container {
+  display: grid;
+  grid-template-columns: 80% 20%;
+  grid-template-areas:
+  "basket-container checkout-container";
+}
+
+#checkout-container {
+  grid-area: checkout-container;
+  display: grid;
+  grid-template-rows: 25px 15px 150px 40px;
+  grid-template-columns: 130px 50px auto;
+  grid-template-areas:
+  "basket-checkout-total checkoutout-total-value ."
+  ". . ."
+  "checkout-btns checkout-btns checkout-btns"
+  "checkout-message checkout-message checkout-message";
+  background-color: #f2f2f2;
+  padding: 45px;
+  margin-right: 15px;
+  border: 1px solid #808080;
 }
 
 #checkout-btns {
   grid-area: checkout-btns;
+  display: flex;
+  align-items: center;
+}
+
+#paypal-buttons-container {
+  width: 275px;
+}
+
+#basket-checkout-total {
+  font-size: 1.3em;
+  grid-area: basket-checkout-total;
+}
+
+#checkout-total-value {
+  font-size: 1.3em;
+  grid-area: checkoutout-total-value
+}
+
+#checkout-message {
+  grid-area: checkout-message;
+  max-width: 275px;
+  font-size: 0.78em;
 }
