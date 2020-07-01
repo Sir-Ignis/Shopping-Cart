@@ -11,9 +11,9 @@ if (localStorage.getItem("shopData") === null) {
       " Includes everything from the Hobby Tier plus" +
       " a shopping cart, comments, security and SEO."
   ];
-  var addonNames = [["Multimedia", "Webforms", "Comments", "Security", "SEO"],
-                    ["Shopping Cart", "SEO", "Comments", "Security"],
-                    ["Advertising"]];
+  var addonNames = [[["Multimedia",0], ["Webforms",0], ["Comments",0], ["Security",0], ["SEO",0]],
+                    [["Shopping Cart",0], ["SEO",0], ["Comments",0], ["Security",0]],
+                    [["Advertising",0]]];
   var addonPrices = [[10.00, 20.00, 10.00, 40.00, 100.00],
                      [20.00, 100.00, 10.00, 40.00],
                      [200.00]]
@@ -33,7 +33,7 @@ if (localStorage.getItem("shopData") === null) {
       },
     ];
   }
-  var shopData = { shopItems: items };
+  var shopData = { shopItems: items, totalPrice: 0};
   localStorage.setItem("shopData", JSON.stringify(shopData));
 }
 

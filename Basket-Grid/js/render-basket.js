@@ -1,3 +1,6 @@
+/*TODO: fix addonContainerID problems: the addonContainer
+        addons are being printed in the wrong addonContainer
+        plus there are bugs when deleting items*/
 window.onload = function () {
   renderBasket();
 };
@@ -59,15 +62,24 @@ function getTotal() {
   return total;
 }
 
-function removeItem(item) {
-  var btn = document.getElementsByClassName("delete-btn");
-  btn = [].slice.call(btn);
-  var index = btn.indexOf(item);
+//value = <symbol><number>
+//eg +10 to increment price by 10
+function renderTotalPrice(value) {
   var price = document.getElementById("total-value").innerText.substring(1);
-  price -= parseInt(document.getElementsByClassName("item-price")[index].innerText.substring(1));
-  document.getElementById("total-value").innerText = "£"+price;
-  var id = document.getElementsByClassName("item-name")[index].id.substring(2);
-  setItemQuantity(id, 0);
+  if(value.slice(0,1) === "+") {
+    document.getElementById("total-value").innerText = "£" + (parseInt(price) + parseInt(value.slice(1)));
+  } if(value.slice(0,1) === "-") {
+    document.getElementById("total-value").innerText = "£" + (parseInt(price) - parseInt(value.slice(1)));
+  }
+}
+
+//deletes basket item
+function removeItem(item) {
+  var index = getIndexOfClassEle(item);
+  var value = "-"+document.getElementsByClassName("item-price")[index].innerText.substring(1);
+  var itemId = document.getElementsByClassName("item-name")[index].id.substring(2);
+  renderTotalPrice(value)
+  setItemQuantity(itemId, 0);
   document.getElementsByClassName("basket-item")[index].remove();
   if(document.getElementsByClassName("basket-item").length === 0) {
     document.getElementById("basket-summary").innerHTML = "";
@@ -75,27 +87,36 @@ function removeItem(item) {
   }
 }
 
-function toggleAddons(item) {
-  var btn = document.getElementsByClassName("addons-btn");
-  btn = [].slice.call(btn);
-  var index = btn.indexOf(item);
-  var addonContainerID = getAddonContainerID(index);
-  if(document.getElementsByClassName("addons-container")[addonContainerID] === undefined) {
-    displayAddons(index);
-} else {
-    document.getElementsByClassName("addons-container")[addonContainerID].remove();
-    document.getElementsByClassName("basket-item")[index].style = null;
-    document.getElementsByClassName("basket-item")[index].style.gridTemplateRows = "30px 35px 55px 40px"
-    document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
-    `"item-icon . ."
-     "item-icon item-name ."
-     "item-icon item-description item-price"
-     "item-icon item-menu-bar .";`
-    document.getElementsByClassName("item-icon")[index].style.marginTop = null;
-}
+//removes the addon container
+function renderRemoveAddon(index, addonContainerID) {
+  document.getElementsByClassName("addons-container")[addonContainerID].remove();
+  document.getElementsByClassName("basket-item")[index].style = null;
+  document.getElementsByClassName("basket-item")[index].style.gridTemplateRows = "30px 35px 55px 40px"
+  document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
+  `"item-icon . ."
+   "item-icon item-name ."
+   "item-icon item-description item-price"
+   "item-icon item-menu-bar .";`
+  document.getElementsByClassName("item-icon")[index].style.marginTop = null;
 }
 
-function displayAddons(index) {
+//shows or removes basket item addons
+function toggleAddons(item) {
+  var index = getIndexOfClassEle(item);
+  var addonContainerID = getAddonContainerID(index);
+  var basketItem = document.getElementsByClassName("basket-item")[index];
+  if(document.getElementsByClassName("addons-container")[addonContainerID] === undefined || !hasAddonContainer(basketItem)) {
+    if(document.getElementsByClassName("addons-container")[addonContainerID] !== undefined) {
+      document.getElementsByClassName("addons-container")[addonContainerID].style.display = "grid";
+    }
+    renderShowAddon(index, addonContainerID);
+  } else {
+    renderRemoveAddon(index, addonContainerID)
+  }
+}
+
+//shows the addon container
+function renderShowAddon(index, addonContainerID) {
   var id = document.getElementsByClassName("item-name")[index].id.substring(2);
   document.getElementsByClassName("basket-item")[index].style.gridTemplateRows = "30px 35px 55px 40px 20px 160px";
   document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
@@ -114,29 +135,43 @@ function displayAddons(index) {
   document
     .getElementsByClassName("item-menu-bar")[index]
     .insertAdjacentHTML("afterend", html);
-  var addonContainerID = getAddonContainerID(index);
-  getItemAddons(id, index, addonContainerID);
+  renderItemAddons(id, index, addonContainerID);
+}
+
+function hasAddonContainer(item) {
+  for(var j = item.children.length-1; j > 0; j--){
+    if(item.children[j].className === "addons-container") {
+      return true;
+    }
+  }
+  return false;
 }
 
 function getAddonContainerID(index) {
-  var item = document.getElementsByClassName("basket-item")[index];
-  for(var i = item.children.length-1; i > 0; i--) {
-    if(item.children[i].className === "addons-container") {
-      var addonsContainer = document.getElementsByClassName("addons-container");
-      addonsContainer = [].slice.call(addonsContainer);
-      return addonsContainer.indexOf(item.children[i]);
+  var items = document.getElementsByClassName("basket-item");
+  var addonContainers = 0;
+  if(document.getElementsByClassName("addons-container") !== undefined) {
+    for(var i = 0; i < items.length; i++) {
+      if(i === index) {
+        return addonContainers;
+      }
+      if(hasAddonContainer(items[i])) {
+        addonContainers++;
+      }
     }
   }
+  return addonContainers;
 }
 
-
-function getItemAddons(id, index, addonContainerID) {
+function renderItemAddons(id, index, addonContainerID) {
   var addonNames = Object.values(JSON.parse(localStorage.getItem("shopData")))[0][id].addonNames;
   var addonPrices = Object.values(JSON.parse(localStorage.getItem("shopData")))[0][id].addonPrices;
   for(var i = 0; i < addonNames.length; i++) {
+    var selected = addonNames[i][1] === 0 ? "radioBtnNotSelected" : "radioBtnSelected";
+    var btnColour = addonNames[i][1] === 0 ? `white` : `green`;
     var html = `<div class="addon-item">
-                <div class="addon-title">${addonNames[i]}</div>
-                <div class="addon-select-btn"><button class="radioBtnNotSelected" onclick="addAddon(${i}, ${index}, ${addonContainerID})"></button></div>
+                <div class="addon-title">${addonNames[i][0]}</div>
+                <div class="addon-select-btn"><button class="${selected}" onclick="addAddon(${i}, ${index}, getAddonContainerID(${index}))" style="background-color:${btnColour}"></button></div>
                 <div class="addon-price">£${addonPrices[i]}</div>
                 </div>`
       document
@@ -145,28 +180,56 @@ function getItemAddons(id, index, addonContainerID) {
   }
 }
 
+function renderRadioBtn(radioBtn, addonContainerChildren, itemIndex, selected) {
+  radioBtn.className = selected ? "radioBtnSelected" : "radioBtnNotSelected";
+  radioBtn.style.backgroundColor = selected ? "green" : "white";
+  var itemPrice = document.getElementsByClassName("item-price")[itemIndex].children[0].innerText.slice(1);
+  var addonPrice = addonContainerChildren.children[2].innerText.substring(1);
+  var cost = selected ? "+"+addonPrice : "-"+addonPrice;
+  document.getElementsByClassName("item-price")[itemIndex].children[0].innerText = "£"+(parseInt(itemPrice)+parseInt(cost));
+  itemPrice = document.getElementsByClassName("item-price")[itemIndex].children[0].innerText.slice(1);
+  renderTotalPrice(cost)
+  var totalPrice = document.getElementById("total-value").innerText.substring(1);
+  memPrice(itemIndex, itemPrice, totalPrice);
+}
+
+function memColour(id, i, selected) {
+  var id = document.getElementsByClassName("basket-item")[id].children[1].id.slice(-1);
+  var x = JSON.parse(localStorage.getItem("shopData"));
+  var y = Object.values(x);
+  y[0][id].addonNames[i][1] = selected ? 1 : 0;
+  Object.assign(x, y);
+  localStorage.setItem("shopData", JSON.stringify(x));
+}
+
+function memPrice(id, itemPrice, totalPrice) {
+  var id = document.getElementsByClassName("basket-item")[id].children[1].id.slice(-1);
+  var x = JSON.parse(localStorage.getItem("shopData"));
+  var y = Object.values(x);
+  y[0][id].price = itemPrice;
+  y[1] = totalPrice;
+  Object.assign(x, y);
+  localStorage.setItem("shopData", JSON.stringify(x));
+}
+
+
 function addAddon(addonIndex, itemIndex, addonContainerID) {
-  console.log("addonIndex: "+addonIndex+" itemIndex : "+itemIndex+" addonContainerID: "+addonContainerID);
   var index = addonIndex+1;
-  if(document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[1].children[0].className === "radioBtnNotSelected") {
-    document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[1].children[0].className = "radioBtnSelected";
-    document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[1].children[0].style.backgroundColor = "green";
-    var cost = parseInt(document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[2].innerText.substring(1));
-    var itemPrice = parseInt(document.getElementsByClassName("item-price")[itemIndex].children[0].innerText.substring(1));
-    itemPrice += cost;
-    document.getElementsByClassName("item-price")[itemIndex].children[0].innerText = "£"+itemPrice;
-    var totalPrice = parseInt(document.getElementById("total-value").innerText.substring(1));
-    totalPrice += cost;
-    document.getElementById("total-value").innerText = "£"+totalPrice;
+  var addonContainerChildren = document.getElementsByClassName("addons-container")[addonContainerID].children[index];
+  var radioBtn = addonContainerChildren.children[1].children[0];
+  //wasn't selected before so now we can select it
+  if(radioBtn.className === "radioBtnNotSelected") {
+    memColour(itemIndex, addonIndex, true);
+    renderRadioBtn(radioBtn, addonContainerChildren, itemIndex, true)
   } else {
-    document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[1].children[0].className = "radioBtnNotSelected";
-    document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[1].children[0].style.backgroundColor = "white";
-    var cost = parseInt(document.getElementsByClassName("addons-container")[addonContainerID].children[index].children[2].innerText.substring(1));
-    var itemPrice = parseInt(document.getElementsByClassName("item-price")[itemIndex].children[0].innerText.substring(1));
-    itemPrice -= cost;
-    document.getElementsByClassName("item-price")[itemIndex].children[0].innerText = "£"+itemPrice;
-    var totalPrice = parseInt(document.getElementById("total-value").innerText.substring(1));
-    totalPrice -= cost;
-    document.getElementById("total-value").innerText = "£"+totalPrice;
+    //was selected before so now we deselect it
+    memColour(itemIndex, addonIndex, false);
+    renderRadioBtn(radioBtn, addonContainerChildren, itemIndex, false)
   }
+}
+
+function getIndexOfClassEle(item) {
+  var className = document.getElementsByClassName(item.className);
+  className = [].slice.call(className);
+  return className.indexOf(item);
 }
