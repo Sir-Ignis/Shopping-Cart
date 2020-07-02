@@ -2,6 +2,7 @@ window.onload = function () {
   renderBasket();
 };
 
+//renders the basket
 function renderBasket() {
   var items = Object.values(JSON.parse(localStorage.getItem("shopData")))[0];
   var empty = true;
@@ -32,6 +33,7 @@ function renderBasket() {
   }
 }
 
+//displays that the basket is empty if it has no items
 function emptyBasket() {
   var html = `<div id="empty-basket"><h2>Your basket is empty.</h2></div>`;
   document
@@ -39,6 +41,7 @@ function emptyBasket() {
     .insertAdjacentHTML("afterbegin", html);
 }
 
+//adds the summary container to the page
 function renderSummary() {
   if (document.getElementById("basket-total") === null) {
     var html = `<div id="basket-total">Basket Total:</div>
@@ -51,6 +54,7 @@ function renderSummary() {
   document.getElementById("total-value").innerText = "£" + getTotal();
 }
 
+//adds the checkout container to the page
 function renderCheckoutContainer() {
   const CHECKOUT_MESSAGE = `Welcome to Clone42! 50% off on your first order. Enter the promocode PROMO2020 at checkout.`
   if(document.getElementById("basket-checkout-total") === null) {
@@ -72,6 +76,7 @@ function renderCheckoutContainer() {
   }
 }
 
+//renders the paypal button and sets up the order properties
 function renderPaypalBtn(FUNDING_SOURCES) {
   var FUNDING_SOURCES = [
     paypal.FUNDING.PAYPAL,
@@ -79,12 +84,47 @@ function renderPaypalBtn(FUNDING_SOURCES) {
     paypal.FUNDING.CREDIT,
     paypal.FUNDING.CARD
   ];
-var button = paypal.Buttons({
-  fundingSource: FUNDING_SOURCES[0]
-});
-button.render('#paypal-paypal-btn-container');
+paypal.Buttons({
+  env: 'sandbox',
+  commit: true,
+  fundingSource: FUNDING_SOURCES[0],
+  // Configure environment
+  client: {
+    sandbox: 'Af9_JLbIYd9RXQbiGRr8D4p0Gdheaiw9IplHBEZ4hbRYtnvURir2QC5WcxNIqZys9qvZJDOurPR34TEj',
+    production: 'demo_production_client_id'
+  },
+  // Set up order
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: getTotal().toFixed(2),
+          currency_code: 'GBP',
+          breakdown: {
+            item_total: {
+              value: getTotal().toFixed(2),
+              currency_code: 'GBP'
+            }
+          }
+        },
+        description: "Clone42 Ltd. Website Development Service",
+        items: getOrderItems()
+      }],
+    });
+  },
+  // Execute the payment
+  onAuthorize: function(data, actions) {
+    return actions.payment.execute().then(function() {
+      // Show a confirmation message to the buyer
+      window.alert('Thank you for your purchase!');
+    });
+  }
+}).render('#paypal-paypal-btn-container');
 }
 
+/*renders the paypal card button and adds an onclick function
+  to it which removes the shop item grid and replaces it with
+  a new order summary grid*/
 function renderPaypalCardBtn(FUNDING_SOURCES) {
   var FUNDING_SOURCES = [
     paypal.FUNDING.PAYPAL,
@@ -93,18 +133,20 @@ function renderPaypalCardBtn(FUNDING_SOURCES) {
     paypal.FUNDING.CARD
   ];
   var button = paypal.Buttons({
+  env: 'sandbox',
+  commit: true,
   fundingSource: FUNDING_SOURCES[3],
   onClick: function() {
     document.getElementById("basket-container").style.display = "none";
     document.getElementById("main-container").style.gridTemplateColumns = "100%";
     document.getElementById("main-container").style.gridTemplateAreas = `"checkout-container"`;
     document.getElementById("checkout-container").style.margin = "0";
-    document.getElementById("checkout-container").style.padding = "0 0 0 45px";
+    document.getElementById("checkout-container").style.padding = "15px 15px 0 15px";
     document.getElementById("paypal-paypal-btn-container").remove();
     document.getElementById("paypal-card-btn-container").style.width = "100%";
     document.getElementById("basket-title").remove()
     document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns checkout-order-summary"`;
-    document.getElementById("checkout-container").style.gridTemplateColumns = "50% 50%";
+    document.getElementById("checkout-container").style.gridTemplateColumns = "770px calc(100% - 770px)";
     document.getElementById("checkout-container").style.gridTemplateRows = "auto";
     document.getElementById("checkout-message").remove();
     document.getElementById("checkout-total-value").remove();
@@ -114,9 +156,10 @@ function renderPaypalCardBtn(FUNDING_SOURCES) {
                     <div id="order-summary-heading">Order Summary</div>
                     <div id="order-item-name-heading">Item Name</div>
                     <div id="order-item-addons-heading">Item Addons</div>
-                    <div id="order-item-price-heading">Item Price</div>
+                    <div id="order-item-price-heading">Item Total Price</div>
                   </div>
                   <div id="order-items"></div>
+                  <div id="orderTotal"></div>
                 </div>`;
     document
       .getElementById("checkout-container")
@@ -135,10 +178,21 @@ function renderPaypalCardBtn(FUNDING_SOURCES) {
           .insertAdjacentHTML("beforeend", itemSummary)
       }
     }
+    var orderPriceArea = document.getElementsByClassName("order-item-price");
+    document.getElementsByClassName("order-item-price")[orderPriceArea.length-1].style.borderRadius = "0 0 5px";
+    var orderTotal = `
+                        <div id="order-total-heading">Order total:</div>
+                        <div id="order-total-value">£${getTotal()}</div>
+                      `
+    document
+      .getElementById("orderTotal")
+      .insertAdjacentHTML("beforeend", orderTotal);
+
   }});
   button.render("#paypal-card-btn-container");
 }
 
+//returns the addons as a single string with each addon seperated by a comma
 function getOrderAddons(item) {
   var addons = item.addonNames;
   var hasAddons = []
@@ -154,7 +208,20 @@ function getOrderAddons(item) {
   return hasAddons.join(", ");
 }
 
+//returns the addons total price for item
+function getOrderAddonsPrices(item) {
+  var addons = item.addonNames;
+  var addonPrices = item.addonPrices;
+  var totalPrice = 0;
+  for(var i = 0; i < addons.length; i++) {
+    if(addons[i][1] === 1) {
+      totalPrice += addonPrices[i][0];
+    }
+  }
+  return totalPrice;
+}
 
+//returns the item total as an int
 function getTotal() {
   var items = document.getElementsByClassName("basket-item");
   var total = 0;
@@ -162,6 +229,29 @@ function getTotal() {
     total += parseInt(document.getElementsByClassName("item-price")[i].innerText.substring(1));
   }
   return total;
+}
+
+//returns an array of order items
+function getOrderItems() {
+  var items = Object.values(JSON.parse(localStorage.getItem("shopData")))[0];
+  var orderedItems = []
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    if (item.quantity > 0) {
+      orderedItems = [
+        ...orderedItems,
+        {
+          name: item.name,
+          unit_amount: {
+                          value:item.price+'.00',
+                          currency_code: 'GBP'
+                       },
+          quantity: item.quantity+""
+        },
+      ];
+    }
+  }
+  return orderedItems;
 }
 
 //value = <symbol><number>
@@ -242,6 +332,7 @@ function renderShowAddon(index, addonContainerID) {
   renderItemAddons(id, index, addonContainerID);
 }
 
+//returns true if item has an addon container otherwise false
 function hasAddonContainer(item) {
   for(var j = item.children.length-1; j > 0; j--){
     if(item.children[j].className === "addons-container") {
@@ -251,6 +342,7 @@ function hasAddonContainer(item) {
   return false;
 }
 
+//returns the addon container id
 function getAddonContainerID(index) {
   var items = document.getElementsByClassName("basket-item");
   var addonContainers = 0;
@@ -267,6 +359,8 @@ function getAddonContainerID(index) {
   return addonContainers;
 }
 
+/*displays the item addons with "radio buttons" acting
+  as selectors for each addon*/
 function renderItemAddons(id, index, addonContainerID) {
   var addonNames = Object.values(JSON.parse(localStorage.getItem("shopData")))[0][id].addonNames;
   var addonPrices = Object.values(JSON.parse(localStorage.getItem("shopData")))[0][id].addonPrices;
@@ -284,6 +378,7 @@ function renderItemAddons(id, index, addonContainerID) {
   }
 }
 
+//renders a button that mimicks radio button behaviour
 function renderRadioBtn(radioBtn, addonContainerChildren, itemIndex, selected) {
   radioBtn.className = selected ? "radioBtnSelected" : "radioBtnNotSelected";
   radioBtn.style.backgroundColor = selected ? "green" : "white";
@@ -297,6 +392,9 @@ function renderRadioBtn(radioBtn, addonContainerChildren, itemIndex, selected) {
   memPrice(itemIndex, itemPrice, totalPrice);
 }
 
+/*sets the basket addon item to 0 if the button is not selected
+  indicated it should not be coloured else 1 if it is selected
+  and coloured*/
 function memColour(id, i, selected) {
   var id = document.getElementsByClassName("basket-item")[id].children[1].id.slice(-1);
   var x = JSON.parse(localStorage.getItem("shopData"));
@@ -306,6 +404,8 @@ function memColour(id, i, selected) {
   localStorage.setItem("shopData", JSON.stringify(x));
 }
 
+/*updates the item and total prices in localStorage to
+  the current item and total prices*/
 function memPrice(id, itemPrice, totalPrice) {
   var id = document.getElementsByClassName("basket-item")[id].children[1].id.slice(-1);
   var x = JSON.parse(localStorage.getItem("shopData"));
@@ -316,7 +416,8 @@ function memPrice(id, itemPrice, totalPrice) {
   localStorage.setItem("shopData", JSON.stringify(x));
 }
 
-
+/*renders the addon buttons with correct colours depending on
+  thei selected states*/
 function addAddon(addonIndex, itemIndex, addonContainerID) {
   var index = addonIndex+1;
   var addonContainerChildren = document.getElementsByClassName("addons-container")[addonContainerID].children[index];
@@ -332,6 +433,7 @@ function addAddon(addonIndex, itemIndex, addonContainerID) {
   }
 }
 
+//returns the index of the element
 function getIndexOfClassEle(item) {
   var className = document.getElementsByClassName(item.className);
   className = [].slice.call(className);

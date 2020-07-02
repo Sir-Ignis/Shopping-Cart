@@ -5,7 +5,7 @@ This is a collection of Vanilla JS implementations of a Shopping Carts. Currentl
 ## Basket Grid
 
 The Basket-Grid implementation is the most advanced version with shop items having addons, and there being
-a separate areas for viewing the shopping basket and checking out with PayPal.
+a separate areas for viewing the shopping basket and checking out with PayPal. The PayPal checkout requires you to login with a sandbox PayPal account.
 
 #### Usage
 To test the Basket-Grid simply invoke `addItem(n), where 0 ≤ n ≤ 2`.
