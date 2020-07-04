@@ -35,7 +35,7 @@ function renderBasket() {
 
 //displays that the basket is empty if it has no items
 function emptyBasket() {
-  var html = `<div id="empty-basket"><h2>Your basket is empty.</h2></div>`;
+  var html = `<div id="empty-basket"><h3>Your basket is empty.</h3></div>`;
   document
     .getElementById("basket-container")
     .insertAdjacentHTML("afterbegin", html);
@@ -44,12 +44,14 @@ function emptyBasket() {
 //adds the summary container to the page
 function renderSummary() {
   if (document.getElementById("basket-total") === null) {
-    var html = `<div id="basket-total">Basket Total:</div>
-  <div id="total-value"></div>
-  `;
+    var html = `<div id="basket-summary">
+                  <div id="basket-total">Basket Total:</div>
+                  <div id="total-value"></div>
+                </div>
+                `;
     document
-      .getElementById("basket-summary")
-      .insertAdjacentHTML("afterbegin", html);
+      .getElementById("basket-container")
+      .insertAdjacentHTML("beforeend", html);
   }
   document.getElementById("total-value").innerText = "£" + getTotal();
 }
@@ -57,15 +59,16 @@ function renderSummary() {
 //adds the checkout container to the page
 function renderCheckoutContainer() {
   const CHECKOUT_MESSAGE = `Welcome to Clone42! 50% off on your first order. Enter the promocode PROMO2020 at checkout.`
-  if(document.getElementById("basket-checkout-total") === null) {
-    var html = `<div id="basket-checkout-total">Basket Total:</div>
-                <div id="checkout-total-value"></div>
+  if(document.getElementById("checkout-container") === null) {
+    var html = `<div id="checkout-container">
+                <div id="basket-checkout-total"><span>Basket Total: </span><span id="checkout-total-value"></span></div>
                 <div id="checkout-btns"><div id="paypal-paypal-btn-container"></div><div id="paypal-card-btn-container"></div></div>
-                <div id="checkout-message">${CHECKOUT_MESSAGE}</div>
+                <div id="checkout-message"><p>${CHECKOUT_MESSAGE}</p></div>
+                </div>
                 `;
     document
-      .getElementById("checkout-container")
-      .insertAdjacentHTML("afterbegin", html);
+      .getElementById("main-container")
+      .insertAdjacentHTML("beforeend", html);
   }
   document.getElementById("checkout-total-value").innerText = "£" + getTotal();
   if(document.getElementById("paypal-paypal-btn-container").innerHTML === "") {
@@ -93,6 +96,7 @@ paypal.Buttons({
     sandbox: 'Af9_JLbIYd9RXQbiGRr8D4p0Gdheaiw9IplHBEZ4hbRYtnvURir2QC5WcxNIqZys9qvZJDOurPR34TEj',
     production: 'demo_production_client_id'
   },
+  onClick: function(){renderOrderSummary(false)},
   // Set up order
   createOrder: function(data, actions) {
     return actions.order.create({
@@ -112,14 +116,23 @@ paypal.Buttons({
       }],
     });
   },
-  // Execute the payment
-  onAuthorize: function(data, actions) {
-    return actions.payment.execute().then(function() {
-      // Show a confirmation message to the buyer
-      window.alert('Thank you for your purchase!');
+  onApprove: function(data, actions) {
+    // This function captures the funds from the transaction.
+    return actions.order.capture().then(function(details) {
+      memOrderInfo(details.payer.name.given_name, data.orderID);
+      window.location.replace('order_complete.html');
     });
   }
 }).render('#paypal-paypal-btn-container');
+}
+
+function memOrderInfo(payerName, orderId) {
+  var x = JSON.parse(localStorage.getItem("shopData"));
+  var y = Object.values(x);
+  y[2] = payerName;
+  y[3] = orderId;
+  Object.assign(x, y);
+  localStorage.setItem("shopData", JSON.stringify(x));
 }
 
 /*renders the paypal card button and adds an onclick function
@@ -136,17 +149,66 @@ function renderPaypalCardBtn(FUNDING_SOURCES) {
   env: 'sandbox',
   commit: true,
   fundingSource: FUNDING_SOURCES[3],
-  onClick: function() {
+  onClick: function(){
+    renderOrderSummary(true)
+  },
+  // Set up order
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: getTotal().toFixed(2),
+          currency_code: 'GBP',
+          breakdown: {
+            item_total: {
+              value: getTotal().toFixed(2),
+              currency_code: 'GBP'
+            }
+          }
+        },
+        description: "Clone42 Ltd. Website Development Service",
+        items: getOrderItems()
+      }],
+    });
+  },
+  onApprove: function(data, actions) {
+    // This function captures the funds from the transaction.
+    return actions.order.capture().then(function(details) {
+      memOrderInfo(details.payer.name.given_name, data.orderID);
+      window.location.replace('order_complete.html');
+    });
+  }
+  });
+  button.render("#paypal-card-btn-container");
+}
+
+/*renders order summary, if card is true
+  then the card and order panels are rendered
+  and paypal-paypal-btn-container is removed
+  else paypal-card-btn-container is remove
+  and just the order panel is rendered
+*/
+function renderOrderSummary(card) {
     document.getElementById("basket-container").style.display = "none";
     document.getElementById("main-container").style.gridTemplateColumns = "100%";
     document.getElementById("main-container").style.gridTemplateAreas = `"checkout-container"`;
     document.getElementById("checkout-container").style.margin = "0";
     document.getElementById("checkout-container").style.padding = "15px 15px 0 15px";
-    document.getElementById("paypal-paypal-btn-container").remove();
-    document.getElementById("paypal-card-btn-container").style.width = "100%";
+    if(card) {
+      document.getElementById("paypal-paypal-btn-container").remove();
+      document.getElementById("paypal-card-btn-container").style.maxWidth = "100%";
+      document.getElementById("paypal-card-btn-container").style.width = "100%";
+    } else {
+      document.getElementById("checkout-btns").style.display = "none";
+    }
     document.getElementById("basket-title").remove()
-    document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns checkout-order-summary"`;
-    document.getElementById("checkout-container").style.gridTemplateColumns = "770px calc(100% - 770px)";
+    if(card) {
+      document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns checkout-order-summary"`;
+      document.getElementById("checkout-container").style.gridTemplateColumns = "770px calc(100% - 770px)";
+    } else {
+      document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-order-summary"`;
+      document.getElementById("checkout-container").style.gridTemplateColumns = "50%";
+    }
     document.getElementById("checkout-container").style.gridTemplateRows = "auto";
     document.getElementById("checkout-message").remove();
     document.getElementById("checkout-total-value").remove();
@@ -160,6 +222,7 @@ function renderPaypalCardBtn(FUNDING_SOURCES) {
                   </div>
                   <div id="order-items"></div>
                   <div id="orderTotal"></div>
+                  <div><a style="color:black" href="basket.html">return to basket</a></div>
                 </div>`;
     document
       .getElementById("checkout-container")
@@ -187,9 +250,6 @@ function renderPaypalCardBtn(FUNDING_SOURCES) {
     document
       .getElementById("orderTotal")
       .insertAdjacentHTML("beforeend", orderTotal);
-
-  }});
-  button.render("#paypal-card-btn-container");
 }
 
 //returns the addons as a single string with each addon seperated by a comma
@@ -276,7 +336,8 @@ function removeItem(item) {
   setItemQuantity(itemId, 0);
   document.getElementsByClassName("basket-item")[index].remove();
   if(document.getElementsByClassName("basket-item").length === 0) {
-    document.getElementById("basket-summary").innerHTML = "";
+    document.getElementById("basket-summary").remove();
+    document.getElementById("checkout-container").remove();
     emptyBasket();
   }
 }
@@ -285,7 +346,6 @@ function removeItem(item) {
 function renderRemoveAddon(index, addonContainerID) {
   document.getElementsByClassName("addons-container")[addonContainerID].remove();
   document.getElementsByClassName("basket-item")[index].style = null;
-  document.getElementsByClassName("basket-item")[index].style.gridTemplateRows = "30px 35px 55px 40px"
   document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
   `"item-icon . ."
    "item-icon item-name ."
@@ -312,14 +372,23 @@ function toggleAddons(item) {
 //shows the addon container
 function renderShowAddon(index, addonContainerID) {
   var id = document.getElementsByClassName("item-name")[index].id.substring(2);
-  document.getElementsByClassName("basket-item")[index].style.gridTemplateRows = "30px 35px 55px 40px 20px 160px";
+  document.getElementsByClassName("basket-item")[index].style.gridAutoRows = "auto"
+  if(window.screen.width > 414) {
   document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
-    `"item-icon . ."
-    "item-icon item-name ."
-    "item-icon item-description item-price"
+    `". . ."
+    "item-icon item-name item-price"
+    "item-icon item-description ."
     ". item-menu-bar ."
     ". addons-container ."`;
-  document.getElementsByClassName("item-icon")[index].style.marginTop = "70px";
+  } else {
+    document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
+      `". . ."
+      "item-icon item-name item-price"
+      "item-icon item-description ."
+      ". item-menu-bar ."
+      "addons-container addons-container ."`;
+  }
+  //document.getElementsByClassName("item-icon")[index].style.marginTop = "70px";
   var html = `<div class="addons-container">
               <div class="addon-item-heading">
                 <div class="addon-title-heading">Addon</div>
