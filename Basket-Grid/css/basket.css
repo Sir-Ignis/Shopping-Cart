@@ -190,12 +190,12 @@
 }
 
 #paypal-paypal-btn-container {
-  max-width: 275px;
+  padding: 2.5px 0;
   width: 100%;
   display: flex;
 }
 #paypal-card-btn-container {
-  max-width: 275px;
+  padding: 2.5px 0;
   width: 100%;
   display: flex;
 }
@@ -208,14 +208,14 @@
 
 #basket-checkout-total span:first-child{
   display: flex;
-  justify-content: center;
-  width: 55%;
+  justify-content: flex-start;
+  width: 45%;
 }
 
 #checkout-total-value {
   grid-area: checkoutout-total-value;
   display: flex;
-  width: 45%
+  width: 55%
 }
 
 #checkout-message {
@@ -225,17 +225,13 @@
   justify-content: center;
 }
 
-#checkout-message p {
-  max-width: 275px;
-}
-
 #checkout-order-summary {
   grid-area: checkout-order-summary;
 }
 
 #checkout-order-headings {
   display: grid;
-  grid-template-columns: 100px 600px auto;
+  grid-template-columns: minmax(100px,30%) minmax(400px, 60%) minmax(90px, 10%);
   grid-template-areas:
   "order-summary-heading order-summary-heading order-summary-heading"
   "order-item-name-heading order-item-addons-heading order-item-price-heading";
@@ -272,7 +268,7 @@
 
 #orderTotal {
   display: grid;
-  grid-template-columns: 100px 600px auto;
+  grid-template-columns: minmax(100px,30%) minmax(400px, 60%) minmax(90px,auto);
   grid-template-areas:
   "order-total-heading order-total-heading order-total-value";
 }
@@ -319,7 +315,7 @@
 .item-order-summarized {
   display: grid;
   grid-template-rows: 60px;
-  grid-template-columns: 100px 600px auto;
+  grid-template-columns: minmax(100px,30%) minmax(400px, 60%) minmax(90px,auto);
   grid-template-areas:
   "order-item-name order-item-addons order-item-price";
   border-bottom: 1px solid black;
@@ -348,8 +344,62 @@ border-radius: 0 5px 5px;
   padding: 10px;
 }
 
+#promo-drop-dwn-contents {
+  grid-area: promo-drop-dwn-contents;
+  padding-top: 10px;
+}
+
+#promo-code-value {
+  width: 60%;
+}
+
+#promo-code-submit {
+  border: 0;
+  height: 34px;
+  width: 32%;
+}
+
+@media screen and (max-width: 1881px) {
+  #checkout-container {
+    grid-template-rows: 20px 10px 90px 30px;
+  }
+}
+
+@media screen and (max-width: 1800px) {
+  #basket-checkout-total span:first-child{
+    width: 50%;
+  }
+
+  #checkout-total-value {
+    width: 50%
+  }
+}
+
+@media screen and (max-width: 1650px) {
+  #orderTotal, .item-order-summarized{
+    grid-template-columns: minmax(100px,30%) minmax(400px, 60%) minmax(90px,auto);
+  }
+
+  #basket-checkout-total span:first-child{
+    width: 55%;
+  }
+
+  #checkout-total-value {
+    width: 45%
+  }
+  #promo-code-value {
+    width: 55%;
+  }
+
+  #promo-code-submit {
+    width: 30%;
+  }
+}
 
 @media screen and (max-width: 1500px) {
+  #orderTotal, .item-order-summarized{
+    grid-template-columns: minmax(100px,30%) minmax(400px, 60%) minmax(90px,auto);
+  }
   #checkout-container {
     padding: 40px 25px;
   }
@@ -372,6 +422,12 @@ border-radius: 0 5px 5px;
   }
 }
 
+@media screen and (max-width: 1400px) {
+  #checkout-order-headings, #orderTotal, .item-order-summarized{
+    grid-template-columns: 30% 50% auto;
+  }
+}
+
 @media screen and (max-width: 1280px) {
   #main-container {
     grid-template-columns: 76% 24%;
@@ -389,6 +445,24 @@ border-radius: 0 5px 5px;
   #checkout-container {
     padding: 30px 14px;
     grid-template-rows: 20px 15px 90px 30px;
+  }
+  #basket-checkout-total span:first-child{
+    width: 50%;
+  }
+
+  #checkout-total-value {
+    width: 50%
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  #basket-checkout-total span:first-child{
+    width: 55%;
+  }
+
+  #checkout-total-value {
+    width: 45%
+  }
 }
 
 @media screen and (max-width: 1024px) {
@@ -418,7 +492,19 @@ border-radius: 0 5px 5px;
   }
   #checkout-container {
     padding: 30px 14px;
-    grid-template-rows: 20px 15px 90px 30px;
+    grid-template-rows: 20px 5px 70px 30px;
+  }
+
+  #checkout-btns {
+    justify-content: center;
+  }
+
+  #basket-checkout-total span:first-child{
+    width: 70%;
+  }
+
+  #checkout-total-value {
+    width: 30%;
   }
 }
 
@@ -435,7 +521,7 @@ border-radius: 0 5px 5px;
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 830px) {
   .basket-item {
     grid-template-columns: 22% 68% 10%;
     grid-template-rows: 15px 35px 70px 35px;
@@ -452,7 +538,7 @@ border-radius: 0 5px 5px;
   }
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 800px) {
   #main-container {
     display: grid;
     grid-template-columns: 100%;
@@ -542,12 +628,15 @@ border-radius: 0 5px 5px;
   .item-description {
     margin-right: 5px;
   }
+  #checkout-order-headings, #orderTotal, .item-order-summarized {
+    grid-template-columns: 20vw 60vw auto;
+  }
 }
 
 @media screen and (max-width: 499px) {
   #checkout-container {
     grid-template-rows: auto auto;
-    grid-template-columns: 18% 57% 25%;
+    grid-template-columns: 0 minmax(160px,75%) minmax(110px,25%);
     grid-template-areas:
     ". checkout-btns basket-checkout-total"
     ". checkout-btns basket-checkout-total";
@@ -593,23 +682,17 @@ border-radius: 0 5px 5px;
   .item-icon {
     font-size: 4em;
   }
-}
-
-@media screen and (max-width: 470px) {
-  #checkout-container {
-    grid-template-columns: 15% 57% 28%;
+  #checkout-order-headings, #orderTotal, .item-order-summarized {
+    grid-template-columns: 20vw 55vw auto;
   }
-}
-
-@media screen and (max-width: 450px) {
-  #checkout-container {
-    grid-template-columns: 0 70% 30%;
+  .item-order-summarized {
+    grid-template-rows: 100px;
   }
 }
 
 @media screen and (max-width: 414px) {
   .basket-item {
-    grid-template-columns: 27.5% 57.5% 15%;
+    grid-template-columns: 25% 60% 15%;
     grid-template-rows: 10px 25px 55px 25px;
   }
   .item-name {
@@ -618,19 +701,13 @@ border-radius: 0 5px 5px;
   .item-price {
     font-size: 0.75em;
   }
-  .addon-item-heading, .addon-item {
-    padding-left: 15px;
+  #checkout-order-headings, #orderTotal, .item-order-summarized {
+    grid-template-columns: 22.5vw 57.5vw auto;
   }
-}
-
-@media screen and (max-width: 400px) {
-  #checkout-container {
-    grid-template-columns: 0 65% 35%;
+  .item-order-summarized {
+    grid-template-rows: 100px;
   }
-}
-
-@media screen and (max-width: 350px) {
-  #checkout-container {
-    grid-template-columns: 0 minmax(160px,65%) minmax(110px,35%);
+  .order-item-name, .order-item-addons, .order-item-price, #order-item-price-heading, #orderTotal {
+    padding: 0;
   }
 }

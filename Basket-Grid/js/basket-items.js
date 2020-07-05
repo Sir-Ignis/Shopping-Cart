@@ -56,7 +56,7 @@ if (localStorage.getItem("shopData") === null) {
       ];
     }
   }
-  var shopData = { shopItems: items, totalPrice: 0, payerName: "", orderId: ""};
+  var shopData = { shopItems: items, totalPrice: 0, payerName: "", orderId: "", code: ""};
   localStorage.setItem("shopData", JSON.stringify(shopData));
 } else {
   changeDescriptions();
@@ -83,8 +83,8 @@ function changeDescriptions() {
 var width = window.screen.width;
 
 window.onresize = function() {
-  if(width < 414 && window.screen.width > 414 ||
-    width > 414 && window.screen.width < 414) {
+  if(width <= 414 && window.screen.width > 414 ||
+    width > 414 && window.screen.width <= 414) {
     console.log("called!");
     changeDescriptions();
     document.getElementById("basket-container").innerHTML = null;
@@ -101,6 +101,7 @@ function addItem(i) {
     var x = JSON.parse(localStorage.getItem("shopData"));
     var y = Object.values(x);
     y[0][i].quantity++;
+    y[1] += y[0][i].price;
     x = y;//Object.assign(x, y);
     localStorage.setItem("shopData", JSON.stringify(x));
   }

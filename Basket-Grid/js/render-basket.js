@@ -55,10 +55,9 @@ function renderSummary() {
   }
   document.getElementById("total-value").innerText = "£" + getTotal();
 }
-
 //adds the checkout container to the page
 function renderCheckoutContainer() {
-  const CHECKOUT_MESSAGE = `Welcome to Clone42! 50% off on your first order. Enter the promocode PROMO2020 at checkout.`
+  const CHECKOUT_MESSAGE = `Welcome to Clone42! 50% off on your first order. Enter your unique promocode <button id="promo-drop-dwn" style="color:green" class="transparent-btn">here</button>.`
   if(document.getElementById("checkout-container") === null) {
     var html = `<div id="checkout-container">
                 <div id="basket-checkout-total"><span>Basket Total: </span><span id="checkout-total-value"></span></div>
@@ -69,6 +68,13 @@ function renderCheckoutContainer() {
     document
       .getElementById("main-container")
       .insertAdjacentHTML("beforeend", html);
+    var stylesTemplateAreas = getComputedStyle(document.getElementById("checkout-container")).gridTemplateAreas;
+    var stylesRows = getComputedStyle(document.getElementById("checkout-container")).gridTemplateRows;
+    document.getElementById("checkout-container").style.gridTemplateAreas = stylesTemplateAreas;
+    document.getElementById("checkout-container").style.gridTemplateAreas = stylesRows;
+    var oldTemplateAreas = document.getElementById("checkout-container").style.gridTemplateAreas;
+    var oldRows = document.getElementById("checkout-container").style.gridTemplateRows;
+    document.getElementById("promo-drop-dwn").addEventListener("click", function(){promoDropDwn(oldRows, oldTemplateAreas)});
   }
   document.getElementById("checkout-total-value").innerText = "£" + getTotal();
   if(document.getElementById("paypal-paypal-btn-container").innerHTML === "") {
@@ -203,13 +209,36 @@ function renderOrderSummary(card) {
     }
     document.getElementById("basket-title").remove()
     if(card) {
-      document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns checkout-order-summary"`;
-      document.getElementById("checkout-container").style.gridTemplateColumns = "770px calc(100% - 770px)";
+      document.getElementById("checkout-container").style.gridTemplateRows = "auto";
+      if(window.screen.width > 1200) {
+        document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-btns checkout-order-summary"`;
+        document.getElementById("checkout-btns").style.paddingRight = "15px";
+        if(window.width > 1400) {
+          document.getElementById("checkout-container").style.gridTemplateColumns = "50% 50%";
+        } else {
+          document.getElementById("checkout-container").style.gridTemplateColumns = "45% 55%";
+        }
+      } else {
+        document.getElementById("checkout-container").style.gridTemplateColumns = "100%";
+        document.getElementById("checkout-container").style.gridTemplateAreas = `
+        "checkout-btns"
+        "checkout-order-summary"`;
+      }
     } else {
       document.getElementById("checkout-container").style.gridTemplateAreas = `"checkout-order-summary"`;
-      document.getElementById("checkout-container").style.gridTemplateColumns = "50%";
+      if(window.screen.width < 1600) {
+        document.getElementById("checkout-container").style.gridTemplateColumns = "100%";
+      } else {
+        document.getElementById("checkout-container").style.gridTemplateColumns = "50%";
+      }
+      document.getElementById("checkout-container").style.gridTemplateRows = "auto";
     }
-    document.getElementById("checkout-container").style.gridTemplateRows = "auto";
+    /*if(card && window.width > 1400) {
+      document.getElementById("checkout-container").style.gridTemplateRows = "auto auto";
+    }*/
+    if(window.width < 414) {
+      document.getElementById("checkout-container").style.padding = "0";
+    }
     document.getElementById("checkout-message").remove();
     document.getElementById("checkout-total-value").remove();
     document.getElementById("basket-checkout-total").remove();
@@ -227,6 +256,7 @@ function renderOrderSummary(card) {
     document
       .getElementById("checkout-container")
       .insertAdjacentHTML("beforeend", html)
+    document.querySelector("#checkout-order-summary div a").parentNode.style.padding = "20px 0";
     var items = Object.values(JSON.parse(localStorage.getItem("shopData")))[0];
     for (var i = 0; i < items.length; i++) {
       var item = items[i];
@@ -373,7 +403,7 @@ function toggleAddons(item) {
 function renderShowAddon(index, addonContainerID) {
   var id = document.getElementsByClassName("item-name")[index].id.substring(2);
   document.getElementsByClassName("basket-item")[index].style.gridAutoRows = "auto"
-  if(window.screen.width > 414) {
+  if(window.screen.width > 499) {
   document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
     `". . ."
     "item-icon item-name item-price"
@@ -384,9 +414,9 @@ function renderShowAddon(index, addonContainerID) {
     document.getElementsByClassName("basket-item")[index].style.gridTemplateAreas =
       `". . ."
       "item-icon item-name item-price"
-      "item-icon item-description ."
+      "item-icon item-description item-description"
       ". item-menu-bar ."
-      "addons-container addons-container ."`;
+      ". addons-container addons-container"`;
   }
   //document.getElementsByClassName("item-icon")[index].style.marginTop = "70px";
   var html = `<div class="addons-container">
@@ -501,6 +531,74 @@ function addAddon(addonIndex, itemIndex, addonContainerID) {
     renderRadioBtn(radioBtn, addonContainerChildren, itemIndex, false)
   }
 }
+
+/*creates the promocode form if it's not on the screen and if the code
+hasn't been entered before*/
+function promoDropDwn(oldRows, oldTemplateAreas) {
+  if(document.getElementById('promo-drop-dwn-contents') === null && Object.values(JSON.parse(localStorage.getItem("shopData")))[4] !== "PROMO2020") {
+    if(window.screen.width > 800) {
+    var newTemplateAreas = oldTemplateAreas + " \"promo-drop-dwn-contents\"";
+    } else {
+        var newTemplateAreas = oldTemplateAreas + " \"promo-drop-dwn-contents promo-drop-dwn-contents\"";
+    }
+    var newRows = oldRows + " 40px";
+    document.getElementById("checkout-container").style.gridTemplateAreas= newTemplateAreas;
+    document.getElementById("checkout-container").style.gridTemplateRows = newRows;
+    var html = `<div id="promo-drop-dwn-contents">
+                  <form onsubmit="event.preventDefault(); validateMyForm();">
+                     <input type="text" id="promo-code-value" name="promocode-value" placeholder="">
+                     <input id="promo-code-submit" type="submit" value="Submit">
+                  </form>
+                </div>`;
+    document
+      .getElementById("checkout-message")
+      .insertAdjacentHTML("afterend", html);
+  } else if(document.getElementById('promo-drop-dwn-contents') !== null) {
+    removePromoDropDwn(oldTemplateAreas, oldRows);
+  }
+}
+
+//removes the promo code form
+function removePromoDropDwn(oldTemplateAreas, oldRows) {
+  document.getElementById("checkout-container").style.gridTemplateAreas = oldTemplateAreas;
+  document.getElementById("checkout-container").style.gridTemplateRows = oldRows;
+  document.getElementById('promo-drop-dwn-contents').remove();
+}
+
+/*checks if the code that's been entered is valid
+; updates prices and closes the form if it's valid*/
+function validateMyForm() {
+ var code = document.getElementById('promo-code-value').value;
+ //TODO: implement promo code getter
+ if(code === "PROMO2020" && Object.values(JSON.parse(localStorage.getItem("shopData")))[4] !== code) {
+   var x = JSON.parse(localStorage.getItem("shopData"))
+   var y = Object.values(x)
+   y[4] = code;
+   for(var i = 0; i < document.getElementsByClassName('basket-item').length; i++) {
+     y[0][i].price *= 0.5;
+     updateItemPrices(y[0][i].price, i);
+   }
+   updateTotalPrices();
+   Object.assign(x, y);
+   localStorage.setItem("shopData", JSON.stringify(x));
+   removePromoDropDwn();
+ }
+}
+
+//sets the basket item price with index i to itemPrice
+function updateItemPrices(itemPrice,i) {
+  var idStr = "ID"+i;
+  var index = getIndexOfClassEle(document.getElementById(idStr))
+  var prices = document.getElementsByClassName("item-price");
+  prices[index].children[0].innerText = "£"+itemPrice;
+}
+
+//updates the total prices to current total price
+function updateTotalPrices() {
+  document.getElementById("total-value").innerText = "£" + getTotal();
+  document.getElementById("checkout-total-value").innerText = "£" + getTotal();
+}
+
 
 //returns the index of the element
 function getIndexOfClassEle(item) {
