@@ -20,3 +20,7 @@ button::-moz-focus-inner, a::-moz-focus-inner {
   background-color: transparent;
   color: inherit;
 }
+
+.transparent-btn:hover {
+  cursor: pointer;
+}

@@ -1,0 +1,79 @@
+#page-container {
+  display: grid;
+  grid-template-columns: 230px calc(100% - 230px);
+  grid-template-areas:
+  "profile-nav-container profile-main-container";
+}
+
+#profile-nav-container {
+  grid-area: profile-nav-container;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 70px 50px 50px calc(100vh - 250px) 50px;
+  grid-template-areas:
+  "profile-heading"
+  "refer-friend-area"
+  "view-discounts-area"
+  "."
+  "logout-area";
+  width: 200px;
+  padding: 15px 15px 0 15px;
+  background-color: #f2f2f2;
+}
+
+#profile-container button {
+  font-size: 1.2em;
+}
+
+#profile-heading {
+  grid-area: profile-heading;
+}
+
+#refer-friend-area {
+  grid-area: refer-friend-area;
+}
+
+#view-discounts-area {
+  grid-area: view-discounts-area;
+}
+
+#logout-area {
+  grid-area: logout-area;
+}
+
+#profile-main-container {
+  grid-area: profile-main-container;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 70px;
+}
+
+#profile-welcome, #refer-friend-heading, #discount-codes-heading {
+  padding: 20px 15px 0 100px;
+}
+
+#referForm {
+  padding-left: 100px;
+}
+
+#referForm form  {
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+}
+
+#friend-label {
+  padding: 10px 0;
+}
+
+#referFormSubmit {
+  margin: 10px 0;
+  width: 100px;
+}
+
+#discount-codes-container {
+  grid-area: discount-codes-container;
+  display: grid;
+  grid-template-columns: 175px 75px;
+  grid-template-rows: repeat(auto-fill, 30px);
+}

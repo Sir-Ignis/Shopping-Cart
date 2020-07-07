@@ -71,7 +71,7 @@ function renderCheckoutContainer() {
     var stylesTemplateAreas = getComputedStyle(document.getElementById("checkout-container")).gridTemplateAreas;
     var stylesRows = getComputedStyle(document.getElementById("checkout-container")).gridTemplateRows;
     document.getElementById("checkout-container").style.gridTemplateAreas = stylesTemplateAreas;
-    document.getElementById("checkout-container").style.gridTemplateAreas = stylesRows;
+    document.getElementById("checkout-container").style.gridTemplateRows = stylesRows;
     var oldTemplateAreas = document.getElementById("checkout-container").style.gridTemplateAreas;
     var oldRows = document.getElementById("checkout-container").style.gridTemplateRows;
     document.getElementById("promo-drop-dwn").addEventListener("click", function(){promoDropDwn(oldRows, oldTemplateAreas)});
@@ -535,7 +535,7 @@ function addAddon(addonIndex, itemIndex, addonContainerID) {
 /*creates the promocode form if it's not on the screen and if the code
 hasn't been entered before*/
 function promoDropDwn(oldRows, oldTemplateAreas) {
-  if(document.getElementById('promo-drop-dwn-contents') === null && Object.values(JSON.parse(localStorage.getItem("shopData")))[4] !== "PROMO2020") {
+  if(document.getElementById('promo-drop-dwn-contents') === null) {
     if(window.screen.width > 800) {
     var newTemplateAreas = oldTemplateAreas + " \"promo-drop-dwn-contents\"";
     } else {
@@ -545,7 +545,7 @@ function promoDropDwn(oldRows, oldTemplateAreas) {
     document.getElementById("checkout-container").style.gridTemplateAreas= newTemplateAreas;
     document.getElementById("checkout-container").style.gridTemplateRows = newRows;
     var html = `<div id="promo-drop-dwn-contents">
-                  <form onsubmit="event.preventDefault(); validateMyForm();">
+                  <form onsubmit="event.preventDefault();validateMyForm();">
                      <input type="text" id="promo-code-value" name="promocode-value" placeholder="">
                      <input id="promo-code-submit" type="submit" value="Submit">
                   </form>
@@ -567,10 +567,9 @@ function removePromoDropDwn(oldTemplateAreas, oldRows) {
 
 /*checks if the code that's been entered is valid
 ; updates prices and closes the form if it's valid*/
-function validateMyForm() {
+async function validateMyForm() {
  var code = document.getElementById('promo-code-value').value;
- //TODO: implement promo code getter
- if(code === "PROMO2020" && Object.values(JSON.parse(localStorage.getItem("shopData")))[4] !== code) {
+ if(await validPromoCode(code) === "found") {
    var x = JSON.parse(localStorage.getItem("shopData"))
    var y = Object.values(x)
    y[4] = code;
@@ -581,9 +580,57 @@ function validateMyForm() {
    updateTotalPrices();
    Object.assign(x, y);
    localStorage.setItem("shopData", JSON.stringify(x));
+   removePromoCode(code);
    removePromoDropDwn();
+ } else {
+   console.log("hii");
  }
 }
+
+/*sends request for php doc to run function
+validCode and return found if the code was found,
+else not found otherwise if the request failed
+returns an error*/
+async function validPromoCode(code) {
+  var result = "";
+  await $.ajax({
+    type: "POST",
+    url: "php/fetchCodes.php",
+    dataType: 'json',
+    data: {functionname: 'validCode', arguments: [code]},
+
+    success: function (obj, textstatus) {
+      if( !('error' in obj)) {
+        result = obj.result === true ? "found" : "notFound";
+      } else {
+        result = "error";
+      }
+    }
+  });
+  console.log(result);
+  return result;
+}
+
+async function removePromoCode(code) {
+  var result = "";
+  await $.ajax({
+    type: "POST",
+    url: "php/fetchCodes.php",
+    dataType: 'json',
+    data: {functionname: 'removeCode', arguments: [code]},
+
+    success: function (obj, textstatus) {
+      if( !('error' in obj)) {
+        result = obj.result;
+      } else {
+        result = "error";
+      }
+    }
+  });
+  console.log(result);
+  return result;
+}
+
 
 //sets the basket item price with index i to itemPrice
 function updateItemPrices(itemPrice,i) {

@@ -1,5 +1,17 @@
+#topbar {
+  display: flex;
+  flex-direction: row;
+}
+
 #basket-title {
   margin: 10px 15px;
+  display: flex;
+}
+
+#google-btn {
+  display: flex;
+  margin-left: auto;
+  padding: 10px 15px;
 }
 
 #basket-container {

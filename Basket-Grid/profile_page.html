@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="google-signin-client_id" content="156164805906-2ask5uccvq8elrrc4ktqbl6chg54t35h.apps.googleusercontent.com">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/profile.css" />
+     <link href="https://fonts.googleapis.com/css2?family=Muli&display=swap" rel="stylesheet">
+    <script src="js/render-profile.js"></script>
+  </head>
+<body>
+  <div id="page-container">
+    <div id="profile-nav-container">
+      <div id="profile-heading"><h1>Profile</h1></div>
+      <div id="refer-friend-area"><button class="transparent-btn" onclick="renderReferForm()">Refer a friend</button></div>
+      <div id="view-discounts-area"><button class="transparent-btn" onclick="renderDiscountCodes()">View discount codes</button></div>
+      <div id="logout-area"><button class="transparent-btn" onclick="profileLogout()">Logout</button></div>
+    </div>
+    <div id="profile-main-container">
+      <div><h2 id="profile-welcome">Welcome to your profile <span id="user-forename"></span></h2></div>
+    </div>
+  </div>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+</body>
+</html>

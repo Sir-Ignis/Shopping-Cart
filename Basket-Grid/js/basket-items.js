@@ -56,7 +56,7 @@ if (localStorage.getItem("shopData") === null) {
       ];
     }
   }
-  var shopData = { shopItems: items, totalPrice: 0, payerName: "", orderId: "", code: ""};
+  var shopData = { shopItems: items, totalPrice: 0, payerName: "", orderId: ""};
   localStorage.setItem("shopData", JSON.stringify(shopData));
 } else {
   changeDescriptions();
